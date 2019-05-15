@@ -29,60 +29,71 @@ public class Switch {
     private String ip = "172.27.78.237";
     private String community = "bcomsnmpadmin";
     private int version = 1;
-    //private ArrayList<String> macs = new ArrayList<String>();
-    private ArrayList<String> vlans = new ArrayList<String>();
+    private ArrayList<Vlan> vlans = new ArrayList();
     
-    public Switch() {
+    public Switch() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException, Exception {
+        initVlans();
     }
     
-    public Switch(String newip, String newcommunity, int newversion) {
-        setIp(newip);
-        setCommunity(newcommunity);
-        setVersion(newversion);
+    private void initVlans() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException, Exception {
+       
+       InetAddress hostAddress = InetAddress.getByName(ip);             
+       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+       
+       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");
+       //System.out.println(newVars.toString());
+      // int size = newVars.size();
+       String gwMac = getGwMac();
+       
+       for (int i = 0; i<newVars.size(); i++) {
+           SNMPSequence pair = (SNMPSequence) newVars.getSNMPObjectAt(i);
+           if (!isVlan(pair.toString())) {
+               break;
+           }
+           Vlan newVlan = new Vlan(pair.toString(), ip, community, 1, gwMac);
+           vlans.add(newVlan);
+           
+           //System.out.println(vlans.get(i));
+       }
+       comInterface.closeConnection();
+        
     }
     
-    public ArrayList<String> getVlans() {
+    public ArrayList<Vlan> getVlans() {
         return vlans;
     }
     
-    public String getIp() {
-        return ip;
+    public String getModel() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
+       
+       InetAddress hostAddress = InetAddress.getByName(ip);             
+       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+       
+       SNMPVarBindList newVars = comInterface.getMIBEntry("1.3.6.1.2.1.1.1.0");
+       String check = newVars.toString();
+       String model = "";
+       int counter = 2;
+       do {
+           
+           if (check.charAt(counter)==' ') {
+               break;
+           } 
+           counter++;
+       } while (true);
+       
+       counter = counter + 2;
+       do {
+          if (check.charAt(counter)==' ') {
+               break;
+          } 
+          model = model+ check.charAt(counter);
+          
+          counter++;
+       } while (true);
+       comInterface.closeConnection();
+       return model;
     }
     
-    public String getCommunity() {
-        return community;
-    }
-    
-    public int getVersion() {
-        return version;
-    }
-    
-    public void setIp(String newip) {
-        ip = newip;
-    }
-    
-    public void setCommunity(String newcommunity) {
-        community = newcommunity;
-    }
-    
-    public void setVersion(int newversion) {
-        version = newversion;
-    }
-    
-   private String getValueAsMac(SNMPSequence pair) {
-        Object obj = pair.getSNMPObjectAt(1);
-        String mac = null;
-        if(obj instanceof SNMPOctetString){
-          SNMPOctetString octetString = (SNMPOctetString) obj;
-          mac = octetString.toHexString();
-          mac = mac.trim().replace(" ", ":").toUpperCase();
-        } else {
-          throw new RuntimeException( " pair is not SNMPOctetString");
-        }
-        return mac;
-   }
-   
-   public String getGwMac() throws Exception {
+    public String getGwMac() throws Exception {
        
        InetAddress hostAddress = InetAddress.getByName(ip);             
        SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
@@ -95,12 +106,12 @@ public class Switch {
        }
        
        newVars = newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + pairToGwIp(pair));
-       
+       comInterface.closeConnection();
        return (getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
        
-   }
-   
-   private String pairToGwIp(String pair) {
+    }
+    
+    private String pairToGwIp(String pair) {
        
        int counter = 2;
        do {    
@@ -121,136 +132,6 @@ public class Switch {
        } while (true); 
        
        return gwip;
-   }
-   
-   public ArrayList<String> getMacs(String vlannr) throws IOException, SNMPBadValueException, SNMPGetException {
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       ArrayList<String> macs = new ArrayList<String>();
-       
-       //SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.4.3.1.1");
-       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.2.2.1.2." + vlannr);
-       //System.out.println(newVars.size());
-       for (int i=0; i<newVars.size(); i++) {
-           SNMPSequence pair = (SNMPSequence) newVars.getSNMPObjectAt(i);
-           //System.out.println(macToHex(pairToMac(pair.toString())));
-           macs.add(macToHex(pairToMac(pair.toString())));
-       }
-       
-            
-       
-       return macs;
-       
-   }
-       
-   private static String macToHex(String str) {
-        try {
-            String separator = ":";
-            String result = "";
-            String[] macParts = str.trim().split("\\:");
-            for (int i = 0; i < macParts.length; i++) {
-                Integer dec = Integer.parseInt(macParts[i]);
-                String hexOctet = Integer.toHexString(dec);
-                if (hexOctet.length() < 2) {
-                    hexOctet = "0" + hexOctet;
-                }
-                if (i < 5) {
-                    result += hexOctet + separator;
-                } else {
-                    result += hexOctet;
-                }
-            }
-            result.toLowerCase();
-            return result;
-
-        } catch (Throwable ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-   
-    private String pairToMac(String pair) {
-        
-        String mac = "";
-        int counter = 2;
-        int dotcount = 0;
-        do {
-           if (pair.charAt(counter)== '.') {
-               dotcount++;
-           }
-           counter++;
-           if(dotcount==14) {
-               break; 
-           }
-            
-        } while (true);
-        
-      
-        do {
-            if (pair.charAt(counter)==' ') {
-                break;
-            }
-            if (pair.charAt(counter)!='.') {
-                mac = mac + pair.charAt(counter);
-            } else {
-                mac = mac + ":";
-            }
-            counter++;
-        } while(true);
-        
-        return mac;
-        
-    }
-    
-    private String pairToVlan(String pair) {
-        
-        String vlan = "";
-        int counter = 2;
-        int dotcount = 0;
-        do {
-           if (pair.charAt(counter)== '.') {
-               dotcount++;
-           }
-           counter++;
-           if(dotcount==13) {
-               break; 
-           }
-            
-        } while (true);
-       
-        do {
-            if (pair.charAt(counter)==' ') {
-                break;
-            }
-            vlan = vlan + pair.charAt(counter);
-            counter++;
-        } while(true);
-        
-        
-        
-        
-        
-        return vlan;
-        
-    }
-    
-    public void initVlans() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
-       
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       
-       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");
-       //System.out.println(newVars.toString());
-      // int size = newVars.size();
-       
-       for (int i = 0; i<newVars.size(); i++) {
-           SNMPSequence pair = (SNMPSequence) newVars.getSNMPObjectAt(i);
-           if (!isVlan(pair.toString())) {
-               break;
-           }
-           vlans.add(pairToVlan(pair.toString()));
-           //System.out.println(vlans.get(i));
-       }
-        
     }
     
     private boolean isVlan(String pair) {
@@ -285,54 +166,17 @@ public class Switch {
         
     }
     
-    
-    public String getModel() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
-       
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       
-       SNMPVarBindList newVars = comInterface.getMIBEntry("1.3.6.1.2.1.1.1.0");
-       String check = newVars.toString();
-       String model = "";
-       int counter = 2;
-       do {
-           
-           if (check.charAt(counter)==' ') {
-               break;
-           } 
-           counter++;
-       } while (true);
-       
-       counter = counter + 2;
-       do {
-          if (check.charAt(counter)==' ') {
-               break;
-          } 
-          model = model+ check.charAt(counter);
-          
-          counter++;
-       } while (true);
-       return model;
-    }
-       
-       
-    public boolean gwMacExists(String vlannr) throws IOException, SNMPBadValueException, SNMPGetException, Exception {
-        
-        boolean check = false;
-        ArrayList<String> macsofvlan = getMacs(vlannr);
-        
-        for (int i = 0; i<macsofvlan.size(); i++) {
-            if(macsofvlan.get(i).equals(getGwMac().toLowerCase())) {
-                check = true;
-            }
+    private String getValueAsMac(SNMPSequence pair) {
+        Object obj = pair.getSNMPObjectAt(1);
+        String mac = null;
+        if(obj instanceof SNMPOctetString){
+          SNMPOctetString octetString = (SNMPOctetString) obj;
+          mac = octetString.toHexString();
+          mac = mac.trim().replace(" ", ":").toUpperCase();
+        } else {
+          throw new RuntimeException( " pair is not SNMPOctetString");
         }
-        
-        return check;
-    }  
-       
-       
+        return mac;
    }
    
-   
-    
-
+}

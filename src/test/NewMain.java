@@ -38,7 +38,7 @@ public class NewMain {
 
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-       
+       /*
        //String ip;
        Scanner in = new Scanner(System.in);
        
@@ -78,8 +78,40 @@ public class NewMain {
        }
        
        System.out.println(sw.gwMacExists(checkvlan));
-       
-       
+       */
+        
+        Switch sw = new Switch();
+        System.out.println("Gateway mac: ");
+        System.out.println(sw.getGwMac());
+        System.out.println("Router model: ");
+        System.out.println(sw.getModel());
+        System.out.println("============: ");
+        
+        ArrayList<Vlan> vlans = new ArrayList();
+        vlans = sw.getVlans();
+        System.out.println("Vlans: ");
+        for (int i = 0; i<vlans.size(); i++) {
+            System.out.println(vlans.get(i).getVlannr());
+        }
+        System.out.println("============: ");
+        
+        Scanner in = new Scanner(System.in);
+        System.out.print("Check vlan (position): ");
+        int check;
+        check = in.nextInt();
+        ArrayList<Mac> macs = vlans.get(check).getMacs();
+        System.out.println("Macs of vlan " + vlans.get(check).getVlannr() + " (" + macs.size() + ") : ");
+        for (int i=0; i<macs.size(); i++) {
+            System.out.println(macs.get(i).getAdress());
+        }
+        
+        System.out.println(vlans.get(check).gwMacExists());
+        
+        
+        
+        
+        
+        
     }
    
     
