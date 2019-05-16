@@ -30,25 +30,36 @@ public class Vlan {
     private String swip;
     private String community;
     private String gwMac;
+    private String port;
     private int version;
     private ArrayList<Mac> macs = new ArrayList();
     
     
-    public Vlan(String pair, String newswip, String newcommunity, int newversion, String newGwMac) throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
-        vlannr = pairToVlan(pair);
+    public Vlan(String oid, String newswip, String newcommunity, int newversion, String newGwMac) throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+        Utility u = new Utility();
+        vlannr = oidToVlan(oid);
         swip = newswip;
         community = newcommunity;
         version = newversion;
         gwMac = newGwMac;
     }
     
-    
-    public boolean gwMacExists() {
+    /*
+    public Vlan() {
         
+    }
+    */
+    
+    
+    public boolean gwMacExists() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+        
+        if (macs.isEmpty()) {
+            initMacs();
+        }
         boolean check = false;
         for (int i=0; i<macs.size(); i++) {
             String checkmac = macs.get(i).getAdress();
-            if (checkmac.equals(gwMac.toLowerCase())) {
+            if (checkmac.equals(gwMac)) {
                 check = true;
                 break;
             }
@@ -60,13 +71,18 @@ public class Vlan {
     
     
     
-    public void initMacs() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
+    
+    private void initMacs() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
+       
+       macs.clear();
        InetAddress hostAddress = InetAddress.getByName(swip);             
        SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
        SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.2.2.1.2." + vlannr);
        
-       for (int i=0; i<newVars.size(); i++) {
-           Mac newMac = new Mac(newVars.getSNMPObjectAt(i).toString());
+       for (int i=0; i< newVars.size(); i++) {
+           //String s = String.valueOf(((SNMPSequence)newVars.getSNMPObjectAt(i)).getSNMPObjectAt(0));
+           String s = Utility.getOid((SNMPSequence)newVars.getSNMPObjectAt(i));
+           Mac newMac = new Mac(s);
            macs.add(newMac);
        }
        comInterface.closeConnection();
@@ -79,40 +95,20 @@ public class Vlan {
     }
     
     public ArrayList<Mac> getMacs() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
-        initMacs();
+        if (macs.isEmpty()) {
+            initMacs();
+        }
         return macs;
     }
     
-    private String pairToVlan(String pair) {
+    private String oidToVlan(String oid) {
         
         String vlan = "";
-        int counter = 2;
-        int dotcount = 0;
-        do {
-           if (pair.charAt(counter)== '.') {
-               dotcount++;
-           }
-           counter++;
-           if(dotcount==13) {
-               break; 
-           }
-            
-        } while (true);
-       
-        do {
-            if (pair.charAt(counter)==' ') {
-                break;
-            }
-            vlan = vlan + pair.charAt(counter);
-            counter++;
-        } while(true);
-        
-        
-        
-        
-        
-        return vlan;
+        String [] parts = oid.split("\\.");
+        return parts[parts.length-1];
         
     }
+    
+
     
 }

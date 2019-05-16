@@ -31,12 +31,28 @@ public class Mac {
     public String getAdress() {
         return adress;
     }
-    
-    public Mac(String pair) {
-        adress = macToHex(pairToMac(pair));
+    public Mac() {
+        
+    }
+    public Mac(String oid) {
+        adress = oidToMac(oid);
     }
     
-    private static String macToHex(String str) {
+    public String oidToMac(String oid) {
+        
+        String [] parts = oid.split("\\.");
+        String macDec = "";
+        for (int i = parts.length-6; i<parts.length; i++) {
+            macDec = macDec + parts[i];
+            if (i!=parts.length-1) {
+                macDec = macDec + ":";
+            }
+        }
+        return macToHex(macDec).toUpperCase();    
+        
+    }
+    
+    private String macToHex(String str) {
         try {
             String separator = ":";
             String result = "";
@@ -53,45 +69,12 @@ public class Mac {
                     result += hexOctet;
                 }
             }
-            result.toLowerCase();
+            //result.toLowerCase();
             return result;
 
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
-    }
-    
-    private String pairToMac(String pair) {
-        
-        String mac = "";
-        int counter = 2;
-        int dotcount = 0;
-        do {
-           if (pair.charAt(counter)== '.') {
-               dotcount++;
-           }
-           counter++;
-           if(dotcount==14) {
-               break; 
-           }
-            
-        } while (true);
-        
-      
-        do {
-            if (pair.charAt(counter)==' ') {
-                break;
-            }
-            if (pair.charAt(counter)!='.') {
-                mac = mac + pair.charAt(counter);
-            } else {
-                mac = mac + ":";
-            }
-            counter++;
-        } while(true);
-        
-        return mac;
-        
     }
     
     
