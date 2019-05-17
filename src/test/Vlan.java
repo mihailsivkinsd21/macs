@@ -36,7 +36,6 @@ public class Vlan {
     
     
     public Vlan(String oid, String newswip, String newcommunity, int newversion, String newGwMac) throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
-        Utility u = new Utility();
         vlannr = oidToVlan(oid);
         swip = newswip;
         community = newcommunity;

@@ -228,9 +228,11 @@ public class MainJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     Switch sw;
+    ArrayList<Switch> Switches = new ArrayList();
     
     private void btnCheckIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckIpActionPerformed
         try {
+            Switches.clear();
             tableVlans.setEnabled(true);
             tableVlans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             sw = new Switch();
@@ -250,12 +252,20 @@ public class MainJFrame extends javax.swing.JFrame {
                 model.addRow(newRow);
                 
                         
-             }
+            }
+            
+            ArrayList<String> allips = Utility.getAllIps(sw.getIp(), sw.getCommunity());
+            for (int i=0; i<allips.size(); i++) {
+                Switch newSwitch = new Switch(allips.get(i), sw.getCommunity());
+                Switches.add(newSwitch);
+            }
             
             DefaultTableModel switchTable = (DefaultTableModel) tableSwitch.getModel();
-            String [] newSwitch = { sw.getIp(), sw.getModel(), String.valueOf(sw.isStatusOk())};
-            switchTable.addRow(newSwitch);
-            
+            switchTable.setRowCount(0);
+            for (int i = 0; i<Switches.size(); i++) {
+                String [] addSwitch = { Switches.get(i).getIp(), Switches.get(i).getModel(), String.valueOf(Switches.get(i).isStatusOk())};
+                switchTable.addRow(addSwitch);
+            }
             
             
             /**

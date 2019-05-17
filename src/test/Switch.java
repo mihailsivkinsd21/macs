@@ -35,8 +35,17 @@ public class Switch {
         initVlans();
     }
     
+    public Switch(String newhostadress, String newcommunity) {
+        setIp(newhostadress);
+        setCommunity(newcommunity);
+    }
+    
     public void setIp(String newIp) {
         ip = newIp;
+    }
+    
+    public String getCommunity() {
+        return community;
     }
     
     public String getIp() {
