@@ -156,6 +156,9 @@
       </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MouseClickedPorts"/>
+      </Events>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
@@ -188,6 +191,9 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JScrollPane" name="switchpanel">
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MouseClickedSwitches"/>
+      </Events>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>

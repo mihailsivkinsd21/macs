@@ -123,6 +123,12 @@ public class MainJFrame extends javax.swing.JFrame {
 
         jTextField1.setText("bcomsnmpadmin");
 
+        jScrollPane3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MouseClickedPorts(evt);
+            }
+        });
+
         tablePorts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -151,6 +157,12 @@ public class MainJFrame extends javax.swing.JFrame {
         areaVlans.setColumns(20);
         areaVlans.setRows(5);
         arePorts.setViewportView(areaVlans);
+
+        switchpanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MouseClickedSwitches(evt);
+            }
+        });
 
         tableSwitch.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -236,6 +248,8 @@ public class MainJFrame extends javax.swing.JFrame {
     
     Switch sw;
     ArrayList<Switch> Switches = new ArrayList();
+    
+    
     private void updateAll(Switch currentsw) throws SNMPBadValueException, SNMPGetException, Exception {
         updatePorts(currentsw);
         updateVlans(currentsw);
@@ -315,8 +329,14 @@ public class MainJFrame extends javax.swing.JFrame {
             // TODO add your handling code here:
             //tableVlans.getSelectedRow();
             areaMacs.setText("");
-            int index = tableVlans.getSelectedRow();
-            ArrayList<Mac> macs = sw.getVlans().get(index).getMacs();
+            int switchindex = tableSwitch.getSelectedRow();
+            int vlanindex = tableVlans.getSelectedRow();
+            ArrayList<Mac> macs;
+            if (switchindex<0) {
+                macs = sw.getVlans().get(vlanindex).getMacs();
+            } else {
+                macs = Switches.get(switchindex).getVlans().get(vlanindex).getMacs();
+            }
             
             for (int i =0; i<macs.size(); i++) {
                 areaMacs.append(macs.get(i).getAdress());
@@ -333,6 +353,22 @@ public class MainJFrame extends javax.swing.JFrame {
             Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_MouseClicked
+
+    private void MouseClickedPorts(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MouseClickedPorts
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MouseClickedPorts
+
+    private void MouseClickedSwitches(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MouseClickedSwitches
+        try {
+            // TODO add your handling code here:
+            int index = tableSwitch.getSelectedRow();
+            updateAll(Switches.get(index));
+        } catch (SNMPGetException ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_MouseClickedSwitches
 
     /**
      * @param args the command line arguments
