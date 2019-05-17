@@ -69,9 +69,10 @@ public class NewMain {
             System.out.println(vlans.get(check).gwMacExists());
         
             
-            ArrayList<String> ips= Utility.getAllIps("172.27.78.237", "bcomsnmpadmin");
-            for (String ip : ips) {
-                System.out.println(ip);
+            ArrayList<Port> ports = sw.getPorts();
+            for (int i = 0; i<ports.size(); i++) {
+                System.out.print(ports.get(i).getPortnr() + " ");
+                System.out.println(ports.get(i).getPortname());
             }
             
             System.out.print("Repeat? 0=no : ");
