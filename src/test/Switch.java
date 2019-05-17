@@ -30,6 +30,7 @@ public class Switch {
     private String community = "bcomsnmpadmin";
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
+    private ArrayList<Port> ports = new ArrayList();
     
     public Switch() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException, Exception {
         initVlans();
@@ -49,7 +50,6 @@ public class Switch {
     }
     
     public String getIp() {
-        
         return ip;
     }
     
@@ -73,6 +73,35 @@ public class Switch {
         return status;
     }
     
+    private void initPorts() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException, Exception {
+       InetAddress hostAddress = InetAddress.getByName(ip);             
+       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+       
+       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.31.1.1.1.1");
+       String gwMac = getGwMac();
+       
+       for (int i=0; i<newVars.size(); i++) {
+           String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+           String value =  Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
+           if (Utility.isPortOid(oid)) {
+               Port newPort = new Port(oid, value, ip, community, gwMac, 1);
+               ports.add(newPort);
+           } else {
+               break;
+           }
+       }
+       
+       comInterface.closeConnection();
+    }
+    
+    public ArrayList<Port> getPorts() throws IOException, SocketException, SNMPBadValueException, SNMPGetException, Exception {
+        if (ports.isEmpty()) {
+            initPorts();
+        }
+        return ports;
+    }
+    
+    
     private void initVlans() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException, Exception {
        
        InetAddress hostAddress = InetAddress.getByName(ip);             
@@ -88,11 +117,12 @@ public class Switch {
            if (Utility.isVlanOid(oid)) {
                 Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
                 vlans.add(newVlan);
+           } else {
+               break;
            }
            //System.out.println(vlans.get(i));
        }
        comInterface.closeConnection();
-        
     }
     
     public ArrayList<Vlan> getVlans() {

@@ -63,7 +63,7 @@ public class MainJFrame extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         tablePorts = new javax.swing.JTable();
         arePorts = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        areaVlans = new javax.swing.JTextArea();
         switchpanel = new javax.swing.JScrollPane();
         tableSwitch = new javax.swing.JTable();
 
@@ -128,22 +128,29 @@ public class MainJFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Port nr.", "Vlan count"
+                "Port nr.", "Port name", "Vlan count"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane3.setViewportView(tablePorts);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        arePorts.setViewportView(jTextArea1);
+        areaVlans.setColumns(20);
+        areaVlans.setRows(5);
+        arePorts.setViewportView(areaVlans);
 
         tableSwitch.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -229,30 +236,50 @@ public class MainJFrame extends javax.swing.JFrame {
     
     Switch sw;
     ArrayList<Switch> Switches = new ArrayList();
+    private void updateAll(Switch currentsw) throws SNMPBadValueException, SNMPGetException, Exception {
+        updatePorts(currentsw);
+        updateVlans(currentsw);
+        areaMacs.setText("");
+        areaVlans.setText("");
+    }
+    
+    private void updatePorts(Switch currentsw) throws IOException, SocketException, UnknownHostException, SNMPBadValueException, SNMPGetException, Exception {
+        DefaultTableModel portTable = (DefaultTableModel) tablePorts.getModel();
+        ArrayList<Port> ports = currentsw.getPorts();
+        portTable.setRowCount(0);
+        for (int i=0; i<ports.size(); i++) {
+            String [] addPort = { String.valueOf(ports.get(i).getPortnr()), ports.get(i).getPortname(), ""};
+            portTable.addRow(addPort);
+        }
+    }
+    
+    private void updateVlans(Switch currentsw) throws IOException, SocketException, UnknownHostException, SNMPBadValueException, SNMPGetException, Exception {
+        ArrayList<Vlan> vlans = currentsw.getVlans();
+        DefaultTableModel model = (DefaultTableModel) tableVlans.getModel();
+        model.setRowCount(0);
+        for (int i=0; i<vlans.size(); i++) {
+            String gwMac;
+            if (vlans.get(i).gwMacExists()) {
+                gwMac = currentsw.getGwMac();
+            } else {
+                gwMac = " ";
+            }
+                
+            int macCount = vlans.get(i).getMacs().size();
+            String [] newRow = { vlans.get(i).getVlannr(), gwMac, String.valueOf(macCount) };
+            model.addRow(newRow);       
+        }
+    }
     
     private void btnCheckIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckIpActionPerformed
         try {
             Switches.clear();
             tableVlans.setEnabled(true);
             tableVlans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            tablePorts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            tableSwitch.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             sw = new Switch();
-            ArrayList<Vlan> vlans = sw.getVlans();
-            DefaultTableModel model = (DefaultTableModel) tableVlans.getModel();
-            model.setRowCount(0);
-            for (int i=0; i<vlans.size(); i++) {
-                String gwMac;
-                if (vlans.get(i).gwMacExists()) {
-                    gwMac = sw.getGwMac();
-                } else {
-                    gwMac = " ";
-                }
-                
-                int macCount = vlans.get(i).getMacs().size();
-                String [] newRow = { vlans.get(i).getVlannr(), gwMac, String.valueOf(macCount) };
-                model.addRow(newRow);
-                
-                        
-            }
+            
             
             ArrayList<String> allips = Utility.getAllIps(sw.getIp(), sw.getCommunity());
             for (int i=0; i<allips.size(); i++) {
@@ -266,6 +293,8 @@ public class MainJFrame extends javax.swing.JFrame {
                 String [] addSwitch = { Switches.get(i).getIp(), Switches.get(i).getModel(), String.valueOf(Switches.get(i).isStatusOk())};
                 switchTable.addRow(addSwitch);
             }
+            
+            updateAll(sw);
             
             
             /**
@@ -344,6 +373,7 @@ public class MainJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane arePorts;
     private javax.swing.JTextArea areaMacs;
+    private javax.swing.JTextArea areaVlans;
     private javax.swing.JButton btnCheckIp;
     private javax.swing.JTextField inputIp;
     private javax.swing.JLabel jLabel1;
@@ -351,7 +381,6 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JScrollPane switchpanel;
     private javax.swing.JTable tablePorts;

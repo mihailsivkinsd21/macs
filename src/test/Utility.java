@@ -51,6 +51,14 @@ public class Utility {
         
     }
     
+    public static boolean isPortOid(String oid) {
+        String [] parts = oid.split("\\.");
+        if ("1".equals(parts[parts.length-2])) {
+            return true;
+        } 
+        return false;
+    }
+    
     public static String getValueAsMac(SNMPSequence pair) {
         Object obj = pair.getSNMPObjectAt(1);
         String mac = null;
