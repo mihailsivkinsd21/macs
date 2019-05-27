@@ -6,6 +6,9 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import snmp.SNMPGetException;
 
 /**
  *
@@ -16,20 +19,20 @@ public class NewJFrame extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
-    public NewJFrame() {
+    public NewJFrame() throws SNMPGetException, Exception {
         initComponents();
-        wrapper = new FrameWrapper();
+        //wrapper = new FrameWrapper(new Switch());
         IridaBindingGroup ibg = new IridaBindingGroup(wrapper);
-        ArrayList<BindingColumn> list = new ArrayList<BindingColumn>();
+        ArrayList<BindingColumn> list = new ArrayList<>();
         list.add(new BindingColumn("vlannr"));
-        //list.add(new BindingColumn("port"));
+        list.add(new BindingColumn("swip"));
         ibg.add("vlan", "vlans", list, jTable1);
         ibg.add("curSwitch.ip", jTextField1);
         ibg.bind();
     }
     
     private void getData(){
-        wrapper.getVlans().add(new Vlan(wrapper.getCurSwitch().getIp()));
+        //wrapper.getVlans().add(new Vlan(wrapper.getCurSwitch().getIp()), );
     }
     
     /**
@@ -132,7 +135,11 @@ public class NewJFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NewJFrame().setVisible(true);
+                try {
+                    new NewJFrame().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

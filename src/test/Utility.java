@@ -91,6 +91,22 @@ public class Utility {
        return allips;
    }
    
+   public static ArrayList getPortNumbers(byte[] bytes) {
+        ArrayList list = new ArrayList();
+        BigInteger s = new BigInteger(bytes);
+        
+        int i;
+        int b;
+        int len = bytes.length * 8;
+        
+        for (i = len - 1; i >=  0 ; i--) {
+            if (s.testBit(i)) {
+                list.add(len - i);
+            }
+        }
+        return list;
+    }
+   
     
     
     

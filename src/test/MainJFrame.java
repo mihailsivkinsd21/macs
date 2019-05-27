@@ -152,6 +152,11 @@ public class MainJFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tablePorts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MouseClickedOnPorts(evt);
+            }
+        });
         jScrollPane3.setViewportView(tablePorts);
 
         areaVlans.setColumns(20);
@@ -249,7 +254,6 @@ public class MainJFrame extends javax.swing.JFrame {
     Switch sw;
     ArrayList<Switch> Switches = new ArrayList();
     
-    
     private void updateAll(Switch currentsw) throws SNMPBadValueException, SNMPGetException, Exception {
         updatePorts(currentsw);
         updateVlans(currentsw);
@@ -262,7 +266,7 @@ public class MainJFrame extends javax.swing.JFrame {
         ArrayList<Port> ports = currentsw.getPorts();
         portTable.setRowCount(0);
         for (int i=0; i<ports.size(); i++) {
-            String [] addPort = { String.valueOf(ports.get(i).getPortnr()), ports.get(i).getPortname(), ""};
+            String [] addPort = { String.valueOf(ports.get(i).getPortnr()), ports.get(i).getPortname(), String.valueOf(ports.get(i).getVlans().size()) };
             portTable.addRow(addPort);
         }
     }
@@ -351,11 +355,27 @@ public class MainJFrame extends javax.swing.JFrame {
             Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SNMPGetException ex) {
             Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_MouseClicked
 
     private void MouseClickedPorts(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MouseClickedPorts
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            areaVlans.setText("");
+            int index = tablePorts.getSelectedRow();
+            Port selectedport = sw.getPorts().get(index);
+            for (int i=0; i<selectedport.getVlans().size(); i++) {
+                areaVlans.append(selectedport.getVlans().get(i));
+            }
+        } catch (SNMPBadValueException ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SNMPGetException ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_MouseClickedPorts
 
     private void MouseClickedSwitches(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MouseClickedSwitches
@@ -369,6 +389,25 @@ public class MainJFrame extends javax.swing.JFrame {
             Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_MouseClickedSwitches
+
+    private void MouseClickedOnPorts(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MouseClickedOnPorts
+        try {
+            // TODO add your handling code here:
+            areaVlans.setText("");
+            int index = tablePorts.getSelectedRow();
+            Port selectedport = sw.getPorts().get(index);
+            areaVlans.append("Vlans on port " + selectedport.getPortname() + " : \n");
+            for (int i=0; i<selectedport.getVlans().size(); i++) {
+                areaVlans.append(selectedport.getVlans().get(i) + "\n");
+            }
+        } catch (SNMPBadValueException ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SNMPGetException ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_MouseClickedOnPorts
 
     /**
      * @param args the command line arguments

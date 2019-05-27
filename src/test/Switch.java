@@ -26,14 +26,29 @@ import java.net.*;
  */
 public class Switch {
     
-    private String ip = "172.27.78.237";
+    private String  ip = "172.27.78.237";
     private String community = "bcomsnmpadmin";
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
     
-    public Switch() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException, Exception {
-        initVlans();
+    public Switch() {
+        
+    }
+    
+    public void init(){
+        try {
+            initVlans();
+            initPorts();
+        } catch (IOException ex) {
+            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SNMPBadValueException ex) {
+            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SNMPGetException ex) {
+            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public Switch(String newhostadress, String newcommunity) {
@@ -65,15 +80,19 @@ public class Switch {
         }
         
         for (int i=0; i<vlans.size(); i++) {
-            if (!vlans.get(i).gwMacExists()) {
-                status = false;
-                break;
+            if (!"2".equals(vlans.get(i).getVlannr())) {
+                if (!vlans.get(i).gwMacExists()) {
+                    status = false;
+                    break;
+                }
             }
         }
         return status;
     }
     
     private void initPorts() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException, Exception {
+       
+       ports.clear();
        InetAddress hostAddress = InetAddress.getByName(ip);             
        SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
        
@@ -84,10 +103,22 @@ public class Switch {
            String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
            String value =  Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
            if (Utility.isPortOid(oid)) {
-               Port newPort = new Port(oid, value, ip, community, gwMac, 1);
+               Port newPort = new Port(oid, value);
                ports.add(newPort);
            } else {
                break;
+           }
+       }
+       
+       if (vlans.isEmpty()) {
+           initVlans();
+       }
+       
+       for (int i=0; i<vlans.size(); i++) {
+           for (int j=0; j<ports.size(); j++) {
+               if (vlans.get(i).portExists(ports.get(j).getPortnr())) {
+                   ports.get(j).addVlan(vlans.get(i).getVlannr());
+               }
            }
        }
        
@@ -125,7 +156,10 @@ public class Switch {
        comInterface.closeConnection();
     }
     
-    public ArrayList<Vlan> getVlans() {
+    public ArrayList<Vlan> getVlans() throws IOException, SocketException, SNMPBadValueException, SNMPGetException, Exception {
+        if (vlans.isEmpty()) {
+            initVlans();
+        }
         return vlans;
     }
     

@@ -65,16 +65,19 @@ public class NewMain {
             for (int i=0; i<macs.size(); i++) {
                 System.out.println(macs.get(i).getAdress());
             }
+            
 
             System.out.println(vlans.get(check).gwMacExists());
         
             
-            ArrayList<Port> ports = sw.getPorts();
-            for (int i = 0; i<ports.size(); i++) {
-                System.out.print(ports.get(i).getPortnr() + " ");
-                System.out.println(ports.get(i).getPortname());
+            Port testport = sw.getPorts().get(27);
+            ArrayList<String> newvlans = testport.getVlans();
+            for (int i = 0; i<newvlans.size(); i++) {
+                System.out.println(newvlans.get(i));
             }
-            
+                
+                
+                
             System.out.print("Repeat? 0=no : ");
             rep=in.nextInt();
         

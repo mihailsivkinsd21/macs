@@ -26,20 +26,28 @@ import java.net.*;
  */
 public class Port {
     
-    private String swip;
-    private String community;
-    private String gwMac;
     private String portname;
     private int portnr;
-    private int version;
-    ArrayList<Vlan> vlans = new ArrayList();
+    private int vlanscount;
+    ArrayList<VlanOnPort> vlans = new ArrayList();
+    private int vlanssize;
     
-    public Port(String oid, String value, String newswip, String newcommunity, String newGwMac, int newversion) {
-        swip = newswip;
-        community = newcommunity;
-        gwMac = newGwMac;
+    public Port(String oid, String value) {
         portname = value;
         portnr = oidToPortnr(oid);
+    }
+    
+    public void addVlan(String vlannr) {
+        vlans.add(new VlanOnPort(vlannr));
+        vlanssize++;
+    }
+    
+    public int getVlanssize() {
+        return vlanssize;
+    }
+    
+    public ArrayList<VlanOnPort> getVlans() {
+        return vlans;
     }
     
     public int getPortnr() {

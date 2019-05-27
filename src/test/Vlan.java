@@ -25,24 +25,36 @@ import java.net.*;
  *
  * @author Praktikant
  */
-public class Vlan {
+public class Vlan extends PropertySupport {
     
     private String vlannr;
     private String swip;
     private String community;
     private String gwMac;
     private String port;
+    private String gwMacCheck = "";
     private int version;
+    private int macCount;
     private ArrayList<Mac> macs = new ArrayList();
     private ArrayList ports = new ArrayList();
     
+    public Vlan(){
+        
+    }
     
-    public Vlan(String oid, String newswip, String newcommunity, int newversion, String newGwMac) throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+    public Vlan(String vlan, String swip){
+        this.vlannr = vlan;
+        this.swip = swip;
+    }
+    
+    
+    public Vlan(String oid, String newswip, String newcommunity, int newversion, String newGwMac) {
         vlannr = oidToVlan(oid);
         swip = newswip;
         community = newcommunity;
         version = newversion;
         gwMac = newGwMac;
+        initMacs();
     }
     
     /*
@@ -72,6 +84,7 @@ public class Vlan {
     
     
     private void initPorts() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
+        
         ports.clear();
         InetAddress hostAddress = InetAddress.getByName(swip);             
         SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
@@ -115,6 +128,8 @@ public class Vlan {
         set.addAll(taggedPorts);
         ArrayList allports = new ArrayList(set);
         ports = allports;
+        
+        comInterface.closeConnection();
          
     }
     
@@ -125,33 +140,73 @@ public class Vlan {
         return ports;
     }
     
-    
-    private void initMacs() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
-       
-       macs.clear();
-       InetAddress hostAddress = InetAddress.getByName(swip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.2.2.1.2." + vlannr);
-       
-       for (int i=0; i< newVars.size(); i++) {
-           //String s = String.valueOf(((SNMPSequence)newVars.getSNMPObjectAt(i)).getSNMPObjectAt(0));
-           String s = Utility.getOid((SNMPSequence)newVars.getSNMPObjectAt(i));
-           Mac newMac = new Mac(s);
-           macs.add(newMac);
-       }
-       comInterface.closeConnection();
-       
+    public boolean portExists(int port) throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+        if (ports.isEmpty()) {
+            initPorts();
+        }
+        for (int i=0; i<ports.size(); i++) {
+            if (Integer.parseInt(ports.get(i).toString())==port) {
+                return true;
+            }
+        }
+        return false;
     }
     
     
+    private void initMacs() {
+
+        try {
+            macs.clear();
+            InetAddress hostAddress = InetAddress.getByName(swip);
+            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.2.2.1.2." + vlannr);
+
+            for (int i = 0; i < newVars.size(); i++) {
+                //String s = String.valueOf(((SNMPSequence)newVars.getSNMPObjectAt(i)).getSNMPObjectAt(0));
+                String s = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+                Mac newMac = new Mac(s);
+                macs.add(newMac);
+            }
+            comInterface.closeConnection();
+
+            macCount = macs.size();
+            if (gwMacExists()) {
+                gwMacCheck = gwMac;
+            } else {
+                gwMacCheck = "";
+            }
+        } catch (Exception ex) {
+           throw new RuntimeException(ex);
+        }
+
+    }
+
     public String getVlannr() {
         return vlannr;
     }
+
+    public void setVlannr(String vlannr) {
+        this.vlannr = vlannr;
+    }
     
-    public ArrayList<Mac> getMacs() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+    public String getSwip() {
+        return swip;
+    }
+    
+    public String getGwMac() throws IOException, SocketException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+        return gwMac;
+    }
+    
+    public String getGwMacCheck() {
+        return gwMacCheck;
+    }
+    
+    
+    public ArrayList<Mac> getMacs() {
         if (macs.isEmpty()) {
             initMacs();
         }
+                
         return macs;
     }
     
@@ -162,6 +217,12 @@ public class Vlan {
         return parts[parts.length-1];
         
     }
+    
+    public int getMacCount() {
+        return macCount;
+    }
+    
+    
     
 
     
