@@ -48,7 +48,17 @@ public class NewMain {
             System.out.println(sw.getModel());
             System.out.println("============: ");
             
-            sw.initVlans();
+            ArrayList<Vlan> vlans = sw.getVlans();
+            for (int i=0; i<vlans.size(); i++) {
+                System.out.println(vlans.get(i).getVlannr());
+            }
+            
+            System.out.println("");
+            ArrayList<Mac> macs = vlans.get(6).getMacs();
+            for (int i=0; i<macs.size(); i++) {
+                System.out.println(macs.get(i).getAdress());
+            }
+            //System.out.println(sw.getStatus());
 
             /*ArrayList<Vlan> vlans = new ArrayList();
             vlans = sw.getVlans();

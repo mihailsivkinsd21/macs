@@ -85,7 +85,10 @@ public class Switch {
     }
     
     public String getStatus() {
-        return status;
+        if (isStatusOk()) {
+            return "OK";
+        }
+        return "NOT OK";
     }
     
     private void initPorts()  {
@@ -149,9 +152,12 @@ public class Switch {
             
             for (int i = 0; i<newVars.size(); i++) {
                 String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+                String value = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
                 if (Utility.isVlanOid(oid)) {
-                    Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
-                    vlans.add(newVlan);
+                    if (!"default".equals(value)) {
+                        Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
+                        vlans.add(newVlan);
+                    }
                 } else {
                     break;
                 }

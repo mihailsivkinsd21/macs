@@ -48,10 +48,22 @@ public class FrameWrapper {
     public void setSwitchFinder(Switch switchFinder) {
         this.switchFinder = switchFinder;
         if(switchFinder!=null) {
+            
             vlans.clear();
             vlans.addAll(switchFinder.getVlans());
+            /*
+            List <Vlan> copyVlans = switchFinder.getVlans();
+            
+            for (int i =0; i<copyVlans.size(); i++) {
+                vlans.add(copyVlans.get(i));
+            }
+                    */
+            
+            
+            
             ports.clear();
             ports.addAll(switchFinder.getPorts());
+            
             curSwitch = switchFinder;
             curVlanMacs.clear();
             curPortVlans.clear();
