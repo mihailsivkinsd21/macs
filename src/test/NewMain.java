@@ -41,14 +41,16 @@ public class NewMain {
         
         int rep = 0;
         do {
-            Switch sw = new Switch();
+            Switch sw = new Switch("172.27.78.163", "bcomsnmpadmin");
             System.out.println("Gateway mac: ");
             System.out.println(sw.getGwMac());
             System.out.println("Router model: ");
             System.out.println(sw.getModel());
             System.out.println("============: ");
+            
+            sw.initVlans();
 
-            ArrayList<Vlan> vlans = new ArrayList();
+            /*ArrayList<Vlan> vlans = new ArrayList();
             vlans = sw.getVlans();
             System.out.println("Vlans: ");
             for (int i = 0; i<vlans.size(); i++) {
@@ -70,26 +72,18 @@ public class NewMain {
             System.out.println(vlans.get(check).gwMacExists());
         
             
-            Port testport = sw.getPorts().get(27);
-            ArrayList<String> newvlans = testport.getVlans();
-            for (int i = 0; i<newvlans.size(); i++) {
-                System.out.println(newvlans.get(i));
-            }
+            System.out.println(sw.getStatus());
                 
                 
                 
             System.out.print("Repeat? 0=no : ");
             rep=in.nextInt();
-        
+        */
         
         } while (rep!=0);
         
-        /*
-        Mac test = new Mac();
-        System.out.println(test.oidToMac("1.3.6.1.2.1.17.7.1.2.2.1.2.19.0.37.13.0.28.197"));
-        Vlan vtest = new Vlan();
-        System.out.println(vtest.oidToVlan("1.3.6.1.2.1.17.7.1.2"));
-                */
+        
+                
    
     } 
     

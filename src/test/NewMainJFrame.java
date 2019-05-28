@@ -43,14 +43,13 @@ public class NewMainJFrame extends javax.swing.JFrame {
         tablePorts = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         tablePortVlans = new javax.swing.JTable();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tableSwitches = new javax.swing.JTable();
         fieldIp = new javax.swing.JTextField();
         checkBtn = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         fieldCommunity = new javax.swing.JTextField();
-        lblStatus = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        tableSwitches = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -94,6 +93,16 @@ public class NewMainJFrame extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(tablePortVlans);
 
+        tableSwitches.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane5.setViewportView(tableSwitches);
+
         fieldIp.setText("172.27.78.237");
 
         checkBtn.setText("check");
@@ -109,16 +118,6 @@ public class NewMainJFrame extends javax.swing.JFrame {
 
         fieldCommunity.setText("bcomsnmpadmin");
 
-        tableSwitches.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane5.setViewportView(tableSwitches);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,28 +127,25 @@ public class NewMainJFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(fieldIp, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(fieldCommunity))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(jScrollPane1)
+                            .addComponent(jScrollPane3))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(checkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                             .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblStatus)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldIp, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldCommunity, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(checkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -164,11 +160,9 @@ public class NewMainJFrame extends javax.swing.JFrame {
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(fieldCommunity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 51, Short.MAX_VALUE))
+                        .addGap(0, 93, Short.MAX_VALUE))
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblStatus)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
@@ -205,21 +199,18 @@ public class NewMainJFrame extends javax.swing.JFrame {
             listTablePorts.add(new BindingColumn("portnr"));
             listTablePorts.add(new BindingColumn("portname"));
             listTablePorts.add(new BindingColumn("vlanssize"));
+            listTablePorts.add(new BindingColumn("vlansString"));
             ibg.add("port", "ports", listTablePorts, tablePorts);
             
             ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();
-            listTablePorts.add(new BindingColumn("ip"));
-            listTablePorts.add(new BindingColumn("model"));
-            listTablePorts.add(new BindingColumn("status"));
-            ibg.add("curSwitch", "switches", listTableSwitches, tableSwitches);
+            listTableSwitches.add(new BindingColumn("ip"));
+            listTableSwitches.add(new BindingColumn("model"));
+            //listTableSwitches.add(new BindingColumn("status"));
+            ibg.add("switchFinder", "switches", listTableSwitches, tableSwitches);
             
             ibg.bind();
             
-            if (wrapper.getCurSwitch().isStatusOk()) {
-                lblStatus.setText("Switch ok");
-            } else {
-                lblStatus.setText("Switch not ok");
-            }
+            
             
             
             
@@ -280,7 +271,6 @@ public class NewMainJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JLabel lblStatus;
     private javax.swing.JTable tableMacs;
     private javax.swing.JTable tablePortVlans;
     private javax.swing.JTable tablePorts;

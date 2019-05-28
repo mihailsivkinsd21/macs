@@ -64,7 +64,7 @@ public class Vlan extends PropertySupport {
     */
     
     
-    public boolean gwMacExists() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+    public boolean gwMacExists() {
         
         if (macs.isEmpty()) {
             initMacs();

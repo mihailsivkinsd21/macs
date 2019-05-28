@@ -31,29 +31,23 @@ public class Switch {
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
+    private String status = "";
     
     public Switch() {
         
     }
     
     public void init(){
-        try {
+        
             initVlans();
             initPorts();
-        } catch (IOException ex) {
-            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SNMPBadValueException ex) {
-            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SNMPGetException ex) {
-            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
     
     public Switch(String newhostadress, String newcommunity) {
         setIp(newhostadress);
         setCommunity(newcommunity);
+        
     }
     
     public void setIp(String newIp) {
@@ -72,9 +66,9 @@ public class Switch {
         community = newCommunity;
     }
     
-    public boolean isStatusOk() throws IOException, SocketException, SNMPBadValueException, SNMPGetException, Exception {
+    private boolean isStatusOk()  {
         
-        boolean status = true;
+        boolean statusCheck = true;
         if (vlans.isEmpty()) {
             initVlans();
         }
@@ -82,50 +76,58 @@ public class Switch {
         for (int i=0; i<vlans.size(); i++) {
             if (!"2".equals(vlans.get(i).getVlannr())) {
                 if (!vlans.get(i).gwMacExists()) {
-                    status = false;
+                    statusCheck = false;
                     break;
                 }
             }
         }
+        return statusCheck;
+    }
+    
+    public String getStatus() {
         return status;
     }
     
-    private void initPorts() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException, Exception {
+    private void initPorts()  {
        
-       ports.clear();
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       
-       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.31.1.1.1.1");
-       String gwMac = getGwMac();
-       
-       for (int i=0; i<newVars.size(); i++) {
-           String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
-           String value =  Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
-           if (Utility.isPortOid(oid)) {
-               Port newPort = new Port(oid, value);
-               ports.add(newPort);
-           } else {
-               break;
-           }
-       }
-       
-       if (vlans.isEmpty()) {
-           initVlans();
-       }
-       
-       for (int i=0; i<vlans.size(); i++) {
-           for (int j=0; j<ports.size(); j++) {
-               if (vlans.get(i).portExists(ports.get(j).getPortnr())) {
-                   ports.get(j).addVlan(vlans.get(i).getVlannr());
-               }
-           }
-       }
-       
-       comInterface.closeConnection();
+        try {
+            ports.clear();
+            InetAddress hostAddress = InetAddress.getByName(ip);
+            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+            
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.31.1.1.1.1");
+            String gwMac = getGwMac();
+            
+            for (int i=0; i<newVars.size(); i++) {
+                String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+                String value =  Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
+                if (Utility.isPortOid(oid)) {
+                    Port newPort = new Port(oid, value);
+                    ports.add(newPort);
+                } else {
+                    break;
+                }
+            }
+            
+            if (vlans.isEmpty()) {
+                initVlans();
+            }
+            
+            for (int i=0; i<vlans.size(); i++) {
+                for (int j=0; j<ports.size(); j++) {
+                    if (vlans.get(i).portExists(ports.get(j).getPortnr())) {
+                        ports.get(j).addVlan(vlans.get(i).getVlannr());
+                    }
+                }
+            }
+            
+            comInterface.closeConnection();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
-    public ArrayList<Port> getPorts() throws IOException, SocketException, SNMPBadValueException, SNMPGetException, Exception {
+    public ArrayList<Port> getPorts()  {
         if (ports.isEmpty()) {
             initPorts();
         }
@@ -133,30 +135,35 @@ public class Switch {
     }
     
     
-    private void initVlans() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException, Exception {
+    public void initVlans()  {
        
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       
-       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");
-       //System.out.println(newVars.toString());
-       //int size = newVars.size();
-       String gwMac = getGwMac();
-       
-       for (int i = 0; i<newVars.size(); i++) {
-           String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
-           if (Utility.isVlanOid(oid)) {
-                Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
-                vlans.add(newVlan);
-           } else {
-               break;
-           }
-           //System.out.println(vlans.get(i));
-       }
-       comInterface.closeConnection();
+        vlans.clear();
+        try {
+            InetAddress hostAddress = InetAddress.getByName(ip);
+            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+            
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");
+            //System.out.println(newVars.toString());
+            //int size = newVars.size();
+            String gwMac = getGwMac();
+            
+            for (int i = 0; i<newVars.size(); i++) {
+                String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+                if (Utility.isVlanOid(oid)) {
+                    Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
+                    vlans.add(newVlan);
+                } else {
+                    break;
+                }
+                //System.out.println(vlans.get(i));
+            }
+            comInterface.closeConnection();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
-    public ArrayList<Vlan> getVlans() throws IOException, SocketException, SNMPBadValueException, SNMPGetException, Exception {
+    public ArrayList<Vlan> getVlans()  {
         if (vlans.isEmpty()) {
             initVlans();
         }
@@ -184,8 +191,11 @@ public class Switch {
        if ("".equals(gwip)) {
            return "INCORRECT IP";
        }
-       
-       newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + gwip);
+       if (getModel().contains("DGS-3420")) {
+           newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.22.1.2.5121." + gwip);
+       } else {
+           newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + gwip);
+       }
        comInterface.closeConnection();
        return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
        

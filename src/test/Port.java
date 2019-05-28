@@ -37,6 +37,25 @@ public class Port {
         portnr = oidToPortnr(oid);
     }
     
+    public String getVlansString() {
+        //для поля в таблице с портами, где отображаются вланы
+        String result = "";
+        if (vlans.size()>5) {
+            for (int i=0; i<5; i++) {
+                result = result + vlans.get(i).getVlannr() + " , ";
+            }
+            result = result + "...";
+        } else {
+            for (int i=0; i<vlans.size(); i++) {
+                result = result + vlans.get(i).getVlannr();
+                if ((vlans.size()-1)!=i) {
+                    result = result + " , ";
+                }
+            }
+        }
+        return result;
+    }
+    
     public void addVlan(String vlannr) {
         vlans.add(new VlanOnPort(vlannr));
         vlanssize++;

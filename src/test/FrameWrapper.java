@@ -31,13 +31,31 @@ public class FrameWrapper {
     private Mac mac = null;
     private Port port = null;
     private VlanOnPort portVlan = null;
-    private Switch curSwitch;
+    private Switch curSwitch = null;
+    private Switch switchFinder = null;
     
     
     public FrameWrapper() {
         vlans.add(new Vlan("123","asf"));
         vlans.add(new Vlan("1234","asf"));
         curSwitch = new Switch();
+    }
+    
+    public Switch getSwitchFinder() {
+        return switchFinder;
+    }
+    
+    public void setSwitchFinder(Switch switchFinder) {
+        this.switchFinder = switchFinder;
+        if(switchFinder!=null) {
+            vlans.clear();
+            vlans.addAll(switchFinder.getVlans());
+            ports.clear();
+            ports.addAll(switchFinder.getPorts());
+            curSwitch = switchFinder;
+            curVlanMacs.clear();
+            curPortVlans.clear();
+        }
     }
     
     public FrameWrapper(Switch curSwitch) throws SNMPBadValueException, SNMPGetException, Exception {
@@ -50,7 +68,7 @@ public class FrameWrapper {
         switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
-                
+               
     }
 
     public List<Vlan> getVlans() {
@@ -100,6 +118,10 @@ public class FrameWrapper {
     
     public void setCurVlanMacs(List<Mac> curVlanMacs) {
         this.curVlanMacs = curVlanMacs;
+    }
+    
+    public List<Switch> getSwitches() {
+        return switches;
     }
     
     
