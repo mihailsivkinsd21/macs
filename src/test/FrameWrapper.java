@@ -23,12 +23,13 @@ import snmp.SNMPGetException;
  */
 public class FrameWrapper extends PropertySupport {
     private List<Switch> switches = ObservableCollections.observableList(new ArrayList<Switch>());
+    private List<Mac> portMacs = ObservableCollections.observableList(new ArrayList<Mac>());
     
     private Vlan vlan = null;
     private Mac mac = null;
     private Port port = null;
-    private Mac macOnPortVlan = null;
     private VlanToPort portVlan = null;
+    private Mac portMac = null;
     
     private Switch curSwitch = null;
                 
@@ -58,6 +59,10 @@ public class FrameWrapper extends PropertySupport {
     public VlanToPort getPortVlan() {
         return portVlan;
     }
+    
+    public List<Mac> getPortMacs() {
+        return portMacs;
+    }
         
     public void setPort(Port port) {
         this.port = port;
@@ -82,7 +87,7 @@ public class FrameWrapper extends PropertySupport {
 
     public void setVlan(Vlan vlan)  {       
        this.vlan = vlan;
-       firePropertyChange("vlan");       
+       firePropertyChange("vlan");
     }
 
     public Switch getCurSwitch() {
@@ -93,9 +98,19 @@ public class FrameWrapper extends PropertySupport {
         this.curSwitch = curSwitch;
     }
     
-    public void setPortVlan(VlanToPort portVlan) {
-        this.portVlan = portVlan;
+    
+    
+    public void setPortVlan(VlanToPort newportVlan) {
+        
+        this.portVlan = newportVlan;
+        if (portVlan!=null) {
+            portMacs.clear();
+            portMacs.addAll(portVlan.getMacs());
+        }
+        //firePropertyChange("curSwitch");
         firePropertyChange("portVlan");
+        //firePropertyChange("curSwitch");
+        
     }
 
     public String getIp() {
@@ -120,15 +135,18 @@ public class FrameWrapper extends PropertySupport {
 
     public void setSelectedSwitch(Switch selectedSwitch) {        
         curSwitch = selectedSwitch;
+        portMacs.clear();
         firePropertyChange("curSwitch");
     }
     
-    public Mac getMacOnPortVlan() {
-        return macOnPortVlan;
+    public Mac getPortMac() {
+        return portMac;
     }
     
-    public void setMacOnPort(Mac macOnPortVlan) {
-        this.macOnPortVlan = macOnPortVlan;
+    public void setPortMac(Mac portMac) {
+        this.portMac = portMac;
     }
+    
+   
 
 }

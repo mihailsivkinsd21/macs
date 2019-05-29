@@ -61,7 +61,7 @@ public class NewMainJFrame extends javax.swing.JFrame {
         
         ArrayList<BindingColumn> listTableMacsPort = new ArrayList<BindingColumn>();
         listTableMacsPort.add(new BindingColumn("adress"));
-        ibg.add("macOnPortVlan", "portVlan.macs", listTableMacsPort, tableMacsPort);
+        ibg.add("portMac", "portMacs", listTableMacsPort, tableMacsPort);
         
 
         ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();

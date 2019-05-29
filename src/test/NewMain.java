@@ -59,6 +59,9 @@ public class NewMain {
                 System.out.println(a.get(i).getVlannr());
             }
             
+            System.out.println(a.get(0).getMaccount());
+            System.out.println(a.get(0).getMacs().get(0).getAdress());
+            
             
             //System.out.println(sw.getStatus());
 

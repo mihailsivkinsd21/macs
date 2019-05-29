@@ -92,7 +92,7 @@ public class Switch {
         return "NOT OK";
     }
     
-    private void makeVlanToPortList() {
+    private void initVlanToPortList() {
         if (ports.isEmpty()) {
             initPorts();
         }
@@ -105,8 +105,9 @@ public class Switch {
     
     public ArrayList<VlanToPort> getVlanToPortList() {
         if (vlanToPortList.isEmpty()) {
-            makeVlanToPortList();
+            initVlanToPortList();
         }
+        
         return vlanToPortList;
     }
     
