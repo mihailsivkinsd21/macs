@@ -21,103 +21,46 @@ import snmp.SNMPGetException;
  *
  * @author Praktikant
  */
-public class FrameWrapper {
+public class FrameWrapper extends PropertySupport {
     private List<Switch> switches = ObservableCollections.observableList(new ArrayList<Switch>());
-    private List<Vlan> vlans = ObservableCollections.observableList(new ArrayList<Vlan>());
-    private List<Mac> curVlanMacs = ObservableCollections.observableList(new ArrayList<Mac>());
-    private List<Port> ports = ObservableCollections.observableList(new ArrayList<Port>());
-    private List<VlanOnPort> curPortVlans = ObservableCollections.observableList(new ArrayList<VlanOnPort>());
+    
     private Vlan vlan = null;
     private Mac mac = null;
     private Port port = null;
     private VlanOnPort portVlan = null;
+    
     private Switch curSwitch = null;
-    private Switch switchFinder = null;
+                
+    private String ip = "172.27.78.237";
+    private String community = "bcomsnmpadmin";
     
     
-    public FrameWrapper() {
-        vlans.add(new Vlan("123","asf"));
-        vlans.add(new Vlan("1234","asf"));
-        curSwitch = new Switch();
+    public FrameWrapper() {        
     }
+        
     
-    public Switch getSwitchFinder() {
-        return switchFinder;
-    }
-    
-    public void setSwitchFinder(Switch switchFinder) {
-        this.switchFinder = switchFinder;
-        if(switchFinder!=null) {
-            
-            vlans.clear();
-            vlans.addAll(switchFinder.getVlans());
-            /*
-            List <Vlan> copyVlans = switchFinder.getVlans();
-            
-            for (int i =0; i<copyVlans.size(); i++) {
-                vlans.add(copyVlans.get(i));
-            }
-                    */
-            
-            
-            
-            ports.clear();
-            ports.addAll(switchFinder.getPorts());
-            
-            curSwitch = switchFinder;
-            curVlanMacs.clear();
-            curPortVlans.clear();
-        }
-    }
-    
-    public FrameWrapper(Switch curSwitch) throws SNMPBadValueException, SNMPGetException, Exception {
-        vlans = curSwitch.getVlans();
-        ports = curSwitch.getPorts();
-        this.curSwitch = curSwitch;
+    public void checkSwitch() {
+        curSwitch = new Switch(ip, community);
         
         switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
-               
-    }
-
-    public List<Vlan> getVlans() {
-        return vlans;
-    }
+        firePropertyChange("curSwitch");
+    }    
     
-    public Port getPort() {
+    public Port getPort() {        
         return port;
     }
-    
-    public List<VlanOnPort> getCurPortVlans() {
-        return curPortVlans;
-    }
-    
+        
     public VlanOnPort getPortVlan() {
         return portVlan;
     }
-    
-    public List<Port> getPorts() {
-        return ports;
-    }
-    
+        
     public void setPort(Port port) {
         this.port = port;
-        if (port != null) {
-           curPortVlans.clear();
-           curPortVlans.addAll(port.getVlans());
-       } 
-        
-    }
-    
-    public List<Mac> getCurVlanMacs()  {
-        return curVlanMacs;
-    }
-
-    public void setVlans(List<Vlan> vlans) {
-        this.vlans = vlans;
+        firePropertyChange("port");
     }
     
     public Mac getMac() {
@@ -125,34 +68,20 @@ public class FrameWrapper {
     }
     
     public void setMac(Mac mac) {
-        this.mac = mac;
-    }
-    
-    public void setCurVlanMacs(List<Mac> curVlanMacs) {
-        this.curVlanMacs = curVlanMacs;
-    }
+        this.mac = mac;        
+    }        
     
     public List<Switch> getSwitches() {
         return switches;
     }
-    
-    
-
+       
     public Vlan getVlan() {
         return vlan;
     }
 
-    public void setVlan(Vlan vlan)  {
-       
+    public void setVlan(Vlan vlan)  {       
        this.vlan = vlan;
-       if (vlan != null) {
-           curVlanMacs.clear();
-           curVlanMacs.addAll(vlan.getMacs());
-       } 
-       // curVlanMacs = vlan.getMacs();
-       // Vlan lal = vlan;
-        //System.out.println(vlan);
-       
+       firePropertyChange("vlan");       
     }
 
     public Switch getCurSwitch() {
@@ -162,7 +91,30 @@ public class FrameWrapper {
     public void setCurSwitch(Switch curSwitch) {
         this.curSwitch = curSwitch;
     }
-    
-    
-    
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getCommunity() {
+        return community;
+    }
+
+    public void setCommunity(String community) {
+        this.community = community;
+    }
+
+    public Switch getSelectedSwitch() {
+        return null;
+    }
+
+    public void setSelectedSwitch(Switch selectedSwitch) {        
+        curSwitch = selectedSwitch;
+        firePropertyChange("curSwitch");
+    }
+
 }

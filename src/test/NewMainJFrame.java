@@ -16,13 +16,50 @@ import snmp.SNMPGetException;
  */
 public class NewMainJFrame extends javax.swing.JFrame {
     private FrameWrapper wrapper;
+    private IridaBindingGroup ibg;
     /**
      * Creates new form NewMainJFrame
      */
     public NewMainJFrame() throws SNMPGetException, Exception {
         initComponents();
+//        wrapper = new FrameWrapper(new Switch(fieldIp.getText(), fieldCommunity.getText()));
+        wrapper = new FrameWrapper();
+        ibg = new IridaBindingGroup(wrapper);
         
+        ibg.add("ip", fieldIp);
+        ibg.add("community", fieldCommunity);
         
+        ArrayList<BindingColumn> listTableVlans = new ArrayList<BindingColumn>();
+        listTableVlans.add(new BindingColumn("vlannr"));
+        listTableVlans.add(new BindingColumn("gwMacCheck"));
+        listTableVlans.add(new BindingColumn("macCount"));
+        ibg.add("vlan", "curSwitch.vlans", listTableVlans, tableVlans);
+
+        ArrayList<BindingColumn> listTableMacs = new ArrayList<BindingColumn>();
+        listTableMacs.add(new BindingColumn("adress"));
+//        ibg.add("mac", "curVlanMacs", listTableMacs, tableMacs);
+        ibg.add("mac", "vlan.macs", listTableMacs, tableMacs);
+
+        ArrayList<BindingColumn> listTablePortVlans = new ArrayList<BindingColumn>();
+        listTablePortVlans.add(new BindingColumn("vlannr"));
+//        ibg.add("portVlan", "curPortVlans", listTablePortVlans, tablePortVlans);
+        ibg.add("portVlan", "port.vlans", listTablePortVlans, tablePortVlans);
+
+        ArrayList<BindingColumn> listTablePorts = new ArrayList<BindingColumn>();
+        listTablePorts.add(new BindingColumn("portnr"));
+        listTablePorts.add(new BindingColumn("portname"));
+        listTablePorts.add(new BindingColumn("vlanssize"));
+        listTablePorts.add(new BindingColumn("vlansString"));
+        ibg.add("port", "curSwitch.ports", listTablePorts, tablePorts);
+
+        ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();
+        listTableSwitches.add(new BindingColumn("ip"));
+        listTableSwitches.add(new BindingColumn("model"));
+//        listTableSwitches.add(new BindingColumn("status"));
+        ibg.add("selectedSwitch", "switches", listTableSwitches, tableSwitches);
+
+        ibg.bind();
+
     }
 
 
@@ -103,7 +140,11 @@ public class NewMainJFrame extends javax.swing.JFrame {
         ));
         jScrollPane5.setViewportView(tableSwitches);
 
-        fieldIp.setText("172.27.78.237");
+        fieldIp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldIpActionPerformed(evt);
+            }
+        });
 
         checkBtn.setText("check");
         checkBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -115,8 +156,6 @@ public class NewMainJFrame extends javax.swing.JFrame {
         jLabel1.setText("IP");
 
         jLabel2.setText("Community");
-
-        fieldCommunity.setText("bcomsnmpadmin");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -177,49 +216,12 @@ public class NewMainJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void checkBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBtnActionPerformed
-        try {
-            wrapper = new FrameWrapper(new Switch(fieldIp.getText(), fieldCommunity.getText()));
-            //wrapper = new FrameWrapper();
-            IridaBindingGroup ibg = new IridaBindingGroup(wrapper);
-            ArrayList<BindingColumn> listTableVlans = new ArrayList<BindingColumn>();
-            listTableVlans.add(new BindingColumn("vlannr"));
-            listTableVlans.add(new BindingColumn("gwMacCheck"));
-            listTableVlans.add(new BindingColumn("macCount"));
-            ibg.add("vlan", "vlans", listTableVlans, tableVlans);
-            
-            ArrayList<BindingColumn> listTableMacs = new ArrayList<BindingColumn>();
-            listTableMacs.add(new BindingColumn("adress"));
-            ibg.add("mac", "curVlanMacs", listTableMacs, tableMacs);
-            
-            ArrayList<BindingColumn> listTablePortVlans = new ArrayList<BindingColumn>();
-            listTablePortVlans.add(new BindingColumn("vlannr"));
-            ibg.add("portVlan","curPortVlans",listTablePortVlans , tablePortVlans);
-            
-            ArrayList<BindingColumn> listTablePorts = new ArrayList<BindingColumn>();
-            listTablePorts.add(new BindingColumn("portnr"));
-            listTablePorts.add(new BindingColumn("portname"));
-            listTablePorts.add(new BindingColumn("vlanssize"));
-            listTablePorts.add(new BindingColumn("vlansString"));
-            ibg.add("port", "ports", listTablePorts, tablePorts);
-            
-            ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();
-            listTableSwitches.add(new BindingColumn("ip"));
-            listTableSwitches.add(new BindingColumn("model"));
-            //listTableSwitches.add(new BindingColumn("status"));
-            ibg.add("switchFinder", "switches", listTableSwitches, tableSwitches);
-            
-            ibg.bind();
-            
-            
-            
-            
-            
-        } catch (SNMPGetException ex) {
-            Logger.getLogger(NewMainJFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(NewMainJFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       wrapper.checkSwitch();
     }//GEN-LAST:event_checkBtnActionPerformed
+
+    private void fieldIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldIpActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fieldIpActionPerformed
 
     /**
      * @param args the command line arguments

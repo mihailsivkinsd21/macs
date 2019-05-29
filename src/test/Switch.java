@@ -32,7 +32,7 @@ public class Switch {
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
     private String status = "";
-    
+        
     public Switch() {
         
     }
@@ -206,7 +206,5 @@ public class Switch {
        return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
        
     }
-    
-    
-   
+
 }
