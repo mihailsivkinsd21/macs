@@ -41,7 +41,7 @@ public class NewMain {
         
         int rep = 0;
         do {
-            Switch sw = new Switch("172.27.78.163", "bcomsnmpadmin");
+            Switch sw = new Switch("172.27.78.237", "bcomsnmpadmin");
             System.out.println("Gateway mac: ");
             System.out.println(sw.getGwMac());
             System.out.println("Router model: ");
@@ -53,11 +53,13 @@ public class NewMain {
                 System.out.println(vlans.get(i).getVlannr());
             }
             
-            System.out.println("");
-            ArrayList<Mac> macs = vlans.get(6).getMacs();
-            for (int i=0; i<macs.size(); i++) {
-                System.out.println(macs.get(i).getAdress());
+            ArrayList<VlanToPort> a = sw.getVlanToPortList();
+            for (int i = 0; i<a.size(); i++) {
+                System.out.print(a.get(i).getPortnr() + " ");
+                System.out.println(a.get(i).getVlannr());
             }
+            
+            
             //System.out.println(sw.getStatus());
 
             /*ArrayList<Vlan> vlans = new ArrayList();

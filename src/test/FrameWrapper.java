@@ -27,7 +27,8 @@ public class FrameWrapper extends PropertySupport {
     private Vlan vlan = null;
     private Mac mac = null;
     private Port port = null;
-    private VlanOnPort portVlan = null;
+    private Mac macOnPortVlan = null;
+    private VlanToPort portVlan = null;
     
     private Switch curSwitch = null;
                 
@@ -54,7 +55,7 @@ public class FrameWrapper extends PropertySupport {
         return port;
     }
         
-    public VlanOnPort getPortVlan() {
+    public VlanToPort getPortVlan() {
         return portVlan;
     }
         
@@ -91,6 +92,11 @@ public class FrameWrapper extends PropertySupport {
     public void setCurSwitch(Switch curSwitch) {
         this.curSwitch = curSwitch;
     }
+    
+    public void setPortVlan(VlanToPort portVlan) {
+        this.portVlan = portVlan;
+        firePropertyChange("portVlan");
+    }
 
     public String getIp() {
         return ip;
@@ -115,6 +121,14 @@ public class FrameWrapper extends PropertySupport {
     public void setSelectedSwitch(Switch selectedSwitch) {        
         curSwitch = selectedSwitch;
         firePropertyChange("curSwitch");
+    }
+    
+    public Mac getMacOnPortVlan() {
+        return macOnPortVlan;
+    }
+    
+    public void setMacOnPort(Mac macOnPortVlan) {
+        this.macOnPortVlan = macOnPortVlan;
     }
 
 }

@@ -31,10 +31,10 @@ public class Vlan extends PropertySupport {
     private String swip;
     private String community;
     private String gwMac;
-    private String port;
+    //private String port;
     private String gwMacCheck = "";
     private int version;
-    private int macCount;
+    private int macCount; 
     private ArrayList<Mac> macs = new ArrayList();
     private ArrayList ports = new ArrayList();
     
@@ -45,6 +45,12 @@ public class Vlan extends PropertySupport {
     public Vlan(String vlan, String swip){
         this.vlannr = vlan;
         this.swip = swip;
+    }
+    
+    public Vlan(String vlannr, String swip, String community) {
+        this.vlannr = vlannr;
+        this.swip = swip;
+        this.community = community;
     }
     
     
@@ -65,10 +71,12 @@ public class Vlan extends PropertySupport {
     
     
     public boolean gwMacExists() {
-        
+      
+        /*
         if (macs.isEmpty()) {
             initMacs();
         }
+                */
         boolean check = false;
         for (int i=0; i<macs.size(); i++) {
             String checkmac = macs.get(i).getAdress();
@@ -83,53 +91,59 @@ public class Vlan extends PropertySupport {
     }
     
     
-    private void initPorts() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
+    private void initPorts()  {
         
-        ports.clear();
-        InetAddress hostAddress = InetAddress.getByName(swip);             
-        SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-        SNMPVarBindList memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.4." + vlannr);
-
-        SNMPSequence pair = (SNMPSequence) memberPorts.getSNMPObjectAt(0);
-        
-        byte[] untg = (byte[]) pair.getSNMPObjectAt(1).getValue();
-
-        byte[] trimmedUntg = new byte[16];
-
-        for (int i = 0; i < untg.length && i < 16 ; i++) {
-            if (untg[i] != 0) {
-                trimmedUntg[i] = untg[i];
-            } else {
-                trimmedUntg[i] = 0;
+        try {
+            ports.clear();
+            InetAddress hostAddress = InetAddress.getByName(swip);
+            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+            SNMPVarBindList memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.4." + vlannr);
+            
+            SNMPSequence pair = (SNMPSequence) memberPorts.getSNMPObjectAt(0);
+            
+            byte[] untg = (byte[]) pair.getSNMPObjectAt(1).getValue();
+            
+            byte[] trimmedUntg = new byte[16];
+            
+            for (int i = 0; i < untg.length && i < 16 ; i++) {
+                if (untg[i] != 0) {
+                    trimmedUntg[i] = untg[i];
+                } else {
+                    trimmedUntg[i] = 0;
+                }
             }
-        }
-        ArrayList allPorts = Utility.getPortNumbers(trimmedUntg);
-        
-        
-        
-        memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.2." + vlannr);
-        pair = (SNMPSequence) memberPorts.getSNMPObjectAt(0);
-        
-        byte[] tg = (byte[]) pair.getSNMPObjectAt(1).getValue();
-
-        byte[] trimmedTg = new byte[16];
-
-        for (int i = 0; i < tg.length && i < 16 ; i++) {
-            if (tg[i] != 0) {
-                trimmedTg[i] = tg[i];
-            } else {
-                trimmedTg[i] = 0;
+            ArrayList allPorts = Utility.getPortNumbers(trimmedUntg);
+            
+            
+            
+            memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.2." + vlannr);
+            pair = (SNMPSequence) memberPorts.getSNMPObjectAt(0);
+            
+            byte[] tg = (byte[]) pair.getSNMPObjectAt(1).getValue();
+            
+            byte[] trimmedTg = new byte[16];
+            
+            for (int i = 0; i < tg.length && i < 16 ; i++) {
+                if (tg[i] != 0) {
+                    trimmedTg[i] = tg[i];
+                } else {
+                    trimmedTg[i] = 0;
+                }
             }
+            
+            ArrayList taggedPorts = Utility.getPortNumbers(trimmedTg);
+            
+            Set<String> set = new LinkedHashSet<>(allPorts);
+            set.addAll(taggedPorts);
+            ArrayList allports = new ArrayList(set);
+            
+            
+            ports = allports;
+            
+            comInterface.closeConnection();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-        
-        ArrayList taggedPorts = Utility.getPortNumbers(trimmedTg);
-        
-        Set<String> set = new LinkedHashSet<>(allPorts);
-        set.addAll(taggedPorts);
-        ArrayList allports = new ArrayList(set);
-        ports = allports;
-        
-        comInterface.closeConnection();
          
     }
     
@@ -151,6 +165,7 @@ public class Vlan extends PropertySupport {
         }
         return false;
     }
+    
     
     
     private void initMacs() {

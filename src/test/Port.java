@@ -29,12 +29,26 @@ public class Port {
     private String portname;
     private int portnr;
     private int vlanscount;
-    ArrayList<VlanOnPort> vlans = new ArrayList();
+    private String swip;
+    private String community;
+    ArrayList<Vlan> vlans = new ArrayList();
+    ArrayList<VlanToPort> vlansToPort = new ArrayList();
     private int vlanssize;
     
     public Port(String oid, String value) {
         portname = value;
         portnr = oidToPortnr(oid);
+    }
+    
+    public ArrayList<VlanToPort> getVlansToPort() {
+        
+        if (vlansToPort.isEmpty()) {
+            for (int i=0; i<vlans.size(); i++) {
+                vlansToPort.add(new VlanToPort(vlans.get(i).getVlannr(), vlans.get(i).getMacs(), portnr, portname));
+            }
+        }
+        
+        return vlansToPort;
     }
     
     public String getVlansString() {
@@ -56,8 +70,13 @@ public class Port {
         return result;
     }
     
-    public void addVlan(String vlannr) {
-        vlans.add(new VlanOnPort(vlannr));
+    public void addVlan(String vlannr, String swip, String community) { //GOVNO
+        vlans.add(new Vlan(vlannr,swip,community));
+        vlanssize++;
+    }
+    
+    public void addVlan(Vlan newvlan) {
+        vlans.add(newvlan);
         vlanssize++;
     }
     
@@ -65,7 +84,7 @@ public class Port {
         return vlanssize;
     }
     
-    public ArrayList<VlanOnPort> getVlans() {
+    public ArrayList<Vlan> getVlans() {
         return vlans;
     }
     

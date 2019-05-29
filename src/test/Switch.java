@@ -31,6 +31,7 @@ public class Switch {
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
+    private ArrayList<VlanToPort> vlanToPortList = new ArrayList();
     private String status = "";
         
     public Switch() {
@@ -91,6 +92,24 @@ public class Switch {
         return "NOT OK";
     }
     
+    private void makeVlanToPortList() {
+        if (ports.isEmpty()) {
+            initPorts();
+        }
+        
+        for (int i=0; i<ports.size(); i++) {
+            vlanToPortList.addAll(ports.get(i).getVlansToPort());
+        }        
+        
+    }
+    
+    public ArrayList<VlanToPort> getVlanToPortList() {
+        if (vlanToPortList.isEmpty()) {
+            makeVlanToPortList();
+        }
+        return vlanToPortList;
+    }
+    
     private void initPorts()  {
        
         try {
@@ -119,7 +138,7 @@ public class Switch {
             for (int i=0; i<vlans.size(); i++) {
                 for (int j=0; j<ports.size(); j++) {
                     if (vlans.get(i).portExists(ports.get(j).getPortnr())) {
-                        ports.get(j).addVlan(vlans.get(i).getVlannr());
+                        ports.get(j).addVlan(vlans.get(i));
                     }
                 }
             }
