@@ -35,6 +35,19 @@ public class Switch {
     private ArrayList<Port> ports = new ArrayList();
     private ArrayList<PortVlan> vlanToPortList = new ArrayList();
     private String status = "";
+    
+    
+    
+    private final String OID_PORTS = "1.3.6.1.2.1.31.1.1.1.1";
+    private final String OID_VLANS = "1.3.6.1.2.1.17.7.1.4.3.1.1";
+    private final String OID_MODEL = "1.3.6.1.2.1.1.1.0";
+    
+    
+    private final String OID_GATEWAY_IP = "1.3.6.1.2.1.4.21.1.7";
+    private final String OID_GATEWAY_IP_3100TG = "1.3.6.1.2.1.4.24.4.1.4.0.0.0.0.0.0.0.0.0";
+    private final String OID_GATEWAY_IP_DLINK1210 = "1.3.6.1.4.1.171.10.76.28.1.42.1.1.4";
+    
+   
         
     public Switch() {
         
@@ -115,7 +128,7 @@ public class Switch {
             InetAddress hostAddress = InetAddress.getByName(ip);
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
-            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.31.1.1.1.1");
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable(OID_PORTS);
             String gwMac = getGatewayMac();
             
             for (int i=0; i<newVars.size(); i++) {
@@ -163,7 +176,7 @@ public class Switch {
             InetAddress hostAddress = InetAddress.getByName(ip);
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
-            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");            
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable(OID_VLANS);            
             String gwMac = getGatewayMac();
             
             for (int i = 0; i<newVars.size(); i++) {
@@ -181,6 +194,7 @@ public class Switch {
             comInterface.closeConnection();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+            
         }
     }
     
@@ -196,35 +210,48 @@ public class Switch {
        InetAddress hostAddress = InetAddress.getByName(ip);             
        SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
        
-       SNMPVarBindList newVars = comInterface.getMIBEntry("1.3.6.1.2.1.1.1.0");
+       SNMPVarBindList newVars = comInterface.getMIBEntry(OID_MODEL);
        return Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
        
     }
     
-    public String getGatewayMac() throws Exception {
+    public String getGatewayMac()  {
        
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       
-       SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.4.21.1.7");
-       String gwip = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
-       
-       if ("".equals(gwip)) {
-           return "INCORRECT IP";
-       }
-       
-       
-       
-       
-       if (getModel().contains("DGS-3420")) {
-           newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.22.1.2.5121." + gwip);
-       } else {
-           newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + gwip);
-       }
-       
-       
-       comInterface.closeConnection();
-       return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
+        try {
+            InetAddress hostAddress = InetAddress.getByName(ip);
+            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+            
+            SNMPVarBindList newVars;
+            if (getModel().contains("DGS-3100-24TG") || getModel().contains("AT-8000")) {
+                newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_3100TG);
+            } else if(getModel().contains("DGS-1210")) {
+                newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_DLINK1210);
+            } else {
+                newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP);
+            }
+            String gwip = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
+            
+            if ("".equals(gwip)) {
+                return "INCORRECT IP";
+            }
+            
+            
+            
+            
+            if (getModel().contains("DGS-3420")) {
+                newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.22.1.2.5121." + gwip);
+            } else {
+                newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + gwip);
+            }
+            
+            
+            comInterface.closeConnection();
+            return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
+        } catch (Exception ex) {
+           Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+           
+        }
+        return "";
        
     }
     
