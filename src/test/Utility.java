@@ -24,6 +24,8 @@ import snmp.*;
 import java.util.*;
 import java.math.*;
 import java.net.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -49,6 +51,11 @@ public class Utility {
         } 
         return false;
         
+    }
+    
+    public static void showTimeoutError() {
+        JFrame frame = new JFrame("Timeout error");
+        JOptionPane.showMessageDialog(frame, "Timeout error");
     }
     
     public static boolean isPortOid(String oid) {

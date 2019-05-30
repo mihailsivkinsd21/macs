@@ -8,12 +8,14 @@ package test;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdesktop.observablecollections.ObservableCollections;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Praktikant
  */
-public class FrameWrapper extends PropertySupport {
+public class MainInterfaceWrapper extends PropertySupport {
     private List<Switch> switches = ObservableCollections.observableList(new ArrayList<Switch>());
     
     private Vlan vlan = null;
@@ -29,20 +31,25 @@ public class FrameWrapper extends PropertySupport {
     private String community = "bcomsnmpadmin";
     
     
-    public FrameWrapper() {        
+    public MainInterfaceWrapper() {
+        
     }
         
     
     public void checkSwitch() {
-        curSwitch = new Switch(ip, community);
-        
-        switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
-        switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
-        switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
-        //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
-        switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
-        //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
-        firePropertyChange("curSwitch");
+        try {
+            curSwitch = new Switch(ip, community);
+
+            switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
+            switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
+            switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
+            //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
+            switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
+            //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
+            firePropertyChange("curSwitch");
+        } catch (Exception ex) {
+            Utility.showTimeoutError();
+        }
     }    
     
     public Port getPort() {        
@@ -52,7 +59,15 @@ public class FrameWrapper extends PropertySupport {
     public void setPort(Port port) {
         this.port = port;
         firePropertyChange("port");
-        
+    }
+    
+    public void refreshCurSwitch() {
+        try {
+            curSwitch.init();
+            firePropertyChange("curSwitch");
+        } catch (Exception ex) {
+            Utility.showTimeoutError();
+        }
     }
     
     public Mac getMac() {
@@ -91,9 +106,6 @@ public class FrameWrapper extends PropertySupport {
     public void setPortVlan(PortVlan newportVlan) {
         this.portVlan = newportVlan;  
         firePropertyChange("portVlan");
-        if (portVlan!=null) {
-            System.out.println(portVlan);
-        }
     }
 
     public String getIp() {
@@ -136,5 +148,6 @@ public class FrameWrapper extends PropertySupport {
     public void setVlanOnPort(Vlan vlanOnPort) {
         this.vlanOnPort = vlanOnPort;
     }
+    
 
 }

@@ -25,6 +25,8 @@ import java.net.*;
  * @author Praktikant
  */
 public class Switch {
+
+    
     
     private String  ip = "172.27.78.237";
     private String community = "bcomsnmpadmin";
@@ -41,6 +43,7 @@ public class Switch {
     public void init() {
         initVlans();
         initPorts();
+        initVlanToPortList();
     }
     
     public Switch(String newhostadress, String newcommunity) {
@@ -92,9 +95,9 @@ public class Switch {
         if (ports.isEmpty()) {
             initPorts();
         }
-
+        vlanToPortList.clear();
         for (int i = 0; i < ports.size(); i++) {
-            vlanToPortList.addAll(ports.get(i).getVlansToPort());
+            vlanToPortList.addAll(ports.get(i).getPortVlans());
         }
     }
     
@@ -113,7 +116,7 @@ public class Switch {
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
             SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.31.1.1.1.1");
-            String gwMac = getGwMac();
+            String gwMac = getGatewayMac();
             
             for (int i=0; i<newVars.size(); i++) {
                 String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
@@ -130,10 +133,11 @@ public class Switch {
                 initVlans();
             }
             
-            for (int i=0; i<vlans.size(); i++) {
-                for (int j=0; j<ports.size(); j++) {
-                    if (vlans.get(i).portExists(ports.get(j).getPortNbr())) {
-                        ports.get(j).addVlan(vlans.get(i));
+            
+            for (Vlan v : vlans) {
+                for (Port p : ports) {
+                    if (v.portExists(p.getPortNbr())) {
+                        p.addVlan(v);
                     }
                 }
             }
@@ -160,7 +164,7 @@ public class Switch {
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
             SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");            
-            String gwMac = getGwMac();
+            String gwMac = getGatewayMac();
             
             for (int i = 0; i<newVars.size(); i++) {
                 String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
@@ -197,7 +201,7 @@ public class Switch {
        
     }
     
-    public String getGwMac() throws Exception {
+    public String getGatewayMac() throws Exception {
        
        InetAddress hostAddress = InetAddress.getByName(ip);             
        SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
@@ -208,14 +212,66 @@ public class Switch {
        if ("".equals(gwip)) {
            return "INCORRECT IP";
        }
+       
+       
+       
+       
        if (getModel().contains("DGS-3420")) {
            newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.22.1.2.5121." + gwip);
        } else {
            newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + gwip);
        }
+       
+       
        comInterface.closeConnection();
        return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
        
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + Objects.hashCode(this.ip);
+        hash = 71 * hash + Objects.hashCode(this.community);
+        hash = 71 * hash + this.version;
+        hash = 71 * hash + Objects.hashCode(this.vlans);
+        hash = 71 * hash + Objects.hashCode(this.ports);
+        hash = 71 * hash + Objects.hashCode(this.vlanToPortList);
+        hash = 71 * hash + Objects.hashCode(this.status);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Switch other = (Switch) obj;
+        if (!Objects.equals(this.ip, other.ip)) {
+            return false;
+        }
+        if (!Objects.equals(this.community, other.community)) {
+            return false;
+        }
+        if (this.version != other.version) {
+            return false;
+        }
+        if (!Objects.equals(this.vlans, other.vlans)) {
+            return false;
+        }
+        if (!Objects.equals(this.ports, other.ports)) {
+            return false;
+        }
+        if (!Objects.equals(this.vlanToPortList, other.vlanToPortList)) {
+            return false;
+        }
+        if (!Objects.equals(this.status, other.status)) {
+            return false;
+        }
+        return true;
     }
 
 }

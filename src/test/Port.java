@@ -40,17 +40,19 @@ public class Port {
     
     public Port() {
     }
+
+    
     
     public Port(String oid, String value) {
         portName = value;
         portNbr = oidToPortNbr(oid);
     }
 
-    public ArrayList<PortVlan> getVlansToPort() {
+    public ArrayList<PortVlan> getPortVlans() {
 
         if (portVlans.isEmpty()) {
-            for (int i = 0; i < vlans.size(); i++) {
-                portVlans.add(new PortVlan(vlans.get(i).getVlanNbr(), vlans.get(i).getMacs(), portNbr, portName));
+            for (Vlan v: vlans) {
+                portVlans.add(new PortVlan(v.getVlanNbr(), v.getMacs(), portNbr, portName));
             }
         }
 
@@ -79,9 +81,10 @@ public class Port {
         return vlans;
     }
 
-    public void addVlan(String vlannr, String swip, String community) { //GOVNO
+    /*public void addVlan(String vlannr, String swip, String community) { //GOVNO
         vlans.add(new Vlan(vlannr, swip, community));
     }
+    */
 
     public void addVlan(Vlan newVlan) {
         vlans.add(newVlan);
@@ -107,6 +110,49 @@ public class Port {
     private int oidToPortNbr(String oid) {
         String[] parts = oid.split("\\.");
         return Integer.parseInt(parts[parts.length - 1]);
+    }
+    
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.portName);
+        hash = 53 * hash + this.portNbr;
+        hash = 53 * hash + Objects.hashCode(this.switchIp);
+        hash = 53 * hash + Objects.hashCode(this.community);
+        hash = 53 * hash + Objects.hashCode(this.vlans);
+        hash = 53 * hash + Objects.hashCode(this.portVlans);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Port other = (Port) obj;
+        if (!Objects.equals(this.portName, other.portName)) {
+            return false;
+        }
+        if (this.portNbr != other.portNbr) {
+            return false;
+        }
+        if (!Objects.equals(this.switchIp, other.switchIp)) {
+            return false;
+        }
+        if (!Objects.equals(this.community, other.community)) {
+            return false;
+        }
+        if (!Objects.equals(this.vlans, other.vlans)) {
+            return false;
+        }
+        if (!Objects.equals(this.portVlans, other.portVlans)) {
+            return false;
+        }
+        return true;
     }
 
 }

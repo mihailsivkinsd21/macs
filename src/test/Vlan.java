@@ -27,6 +27,8 @@ import java.net.*;
  */
 public class Vlan extends PropertySupport {
 
+    
+
     private String vlanNbr;
     private String switchIp;
     private String community;
@@ -149,7 +151,7 @@ public class Vlan extends PropertySupport {
         if (ports.isEmpty()) {
             initPorts();
         }
-        for (int i=0; i<ports.size(); i++) {
+        for (int i = 0; i<ports.size(); i++) {
             if (Integer.parseInt(ports.get(i).toString())==port) {
                 return true;
             }
@@ -173,6 +175,8 @@ public class Vlan extends PropertySupport {
                 Mac newMac = new Mac(s);
                 macs.add(newMac);
             }
+            
+            
             comInterface.closeConnection();
 
             macCount = macs.size();
@@ -226,6 +230,57 @@ public class Vlan extends PropertySupport {
     
     public int getMacCount() {
         return macCount;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.vlanNbr);
+        hash = 89 * hash + Objects.hashCode(this.switchIp);
+        hash = 89 * hash + Objects.hashCode(this.community);
+        hash = 89 * hash + Objects.hashCode(this.gatewayMac);
+        hash = 89 * hash + Objects.hashCode(this.gatewayMacCheck);
+        hash = 89 * hash + this.version;
+        hash = 89 * hash + this.macCount;
+        hash = 89 * hash + Objects.hashCode(this.macs);
+        hash = 89 * hash + Objects.hashCode(this.ports);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Vlan other = (Vlan) obj;
+        if (!Objects.equals(this.vlanNbr, other.vlanNbr)) {
+            return false;
+        }
+        if (!Objects.equals(this.switchIp, other.switchIp)) {
+            return false;
+        }
+        if (!Objects.equals(this.community, other.community)) {
+            return false;
+        }
+        if (!Objects.equals(this.gatewayMac, other.gatewayMac)) {
+            return false;
+        }
+        if (!Objects.equals(this.gatewayMacCheck, other.gatewayMacCheck)) {
+            return false;
+        }
+        if (this.version != other.version) {
+            return false;
+        }
+        if (this.macCount != other.macCount) {
+            return false;
+        }
+        if (!Objects.equals(this.ports, other.ports)) {
+            return false;
+        }
+        return true;
     }
     
     

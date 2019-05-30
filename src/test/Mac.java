@@ -62,6 +62,7 @@ public class Mac {
                 if (hexOctet.length() < 2) {
                     hexOctet = "0" + hexOctet;
                 }
+                
                 if (i < 5) {
                     result += hexOctet + separator;
                 } else {
