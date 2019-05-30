@@ -26,30 +26,29 @@ import java.net.*;
  */
 public class Mac {
     
-    private String adress;
+    private String address;
     
-    public String getAdress() {
-        return adress;
+    public Mac() {        
     }
-    public Mac() {
-        
-    }
+    
     public Mac(String oid) {
-        adress = oidToMac(oid);
+        address = oidToMac(oid);
+    }
+    
+    public String getAddress() {
+        return address;
     }
     
     public String oidToMac(String oid) {
-        
-        String [] parts = oid.split("\\.");
+        String[] parts = oid.split("\\.");
         String macDec = "";
-        for (int i = parts.length-6; i<parts.length; i++) {
+        for (int i = parts.length - 6; i < parts.length; i++) {
             macDec = macDec + parts[i];
-            if (i!=parts.length-1) {
+            if (i != parts.length - 1) {
                 macDec = macDec + ":";
             }
         }
-        return macToHex(macDec).toUpperCase();    
-        
+        return macToHex(macDec).toUpperCase();
     }
     
     private String macToHex(String str) {
@@ -76,6 +75,30 @@ public class Mac {
             throw new RuntimeException(ex);
         }
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.address);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Mac other = (Mac) obj;
+        if (!Objects.equals(this.address, other.address)) {
+            return false;
+        }
+        return true;
+    }
     
 }

@@ -5,17 +5,9 @@
  */
 package test;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.collections.ObservableList;
 import org.jdesktop.observablecollections.ObservableCollections;
-import snmp.SNMPBadValueException;
-import snmp.SNMPGetException;
 
 /**
  *
@@ -23,12 +15,12 @@ import snmp.SNMPGetException;
  */
 public class FrameWrapper extends PropertySupport {
     private List<Switch> switches = ObservableCollections.observableList(new ArrayList<Switch>());
-    private List<Mac> portMacs = ObservableCollections.observableList(new ArrayList<Mac>());
     
     private Vlan vlan = null;
     private Mac mac = null;
     private Port port = null;
-    private VlanToPort portVlan = null;
+    private PortVlan portVlan = null;
+    private Vlan vlanOnPort;
     private Mac portMac = null;
     
     private Switch curSwitch = null;
@@ -46,27 +38,21 @@ public class FrameWrapper extends PropertySupport {
         
         switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
-        switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
-        switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
         switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
+        //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
+        switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
+        //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
         firePropertyChange("curSwitch");
     }    
     
     public Port getPort() {        
         return port;
     }
-        
-    public VlanToPort getPortVlan() {
-        return portVlan;
-    }
     
-    public List<Mac> getPortMacs() {
-        return portMacs;
-    }
-        
     public void setPort(Port port) {
         this.port = port;
         firePropertyChange("port");
+        
     }
     
     public Mac getMac() {
@@ -98,19 +84,16 @@ public class FrameWrapper extends PropertySupport {
         this.curSwitch = curSwitch;
     }
     
+    public PortVlan getPortVlan() {        
+        return portVlan;
+    }
     
-    
-    public void setPortVlan(VlanToPort newportVlan) {
-        
-        this.portVlan = newportVlan;
-        if (portVlan!=null) {
-            portMacs.clear();
-            portMacs.addAll(portVlan.getMacs());
-        }
-        //firePropertyChange("curSwitch");
+    public void setPortVlan(PortVlan newportVlan) {
+        this.portVlan = newportVlan;  
         firePropertyChange("portVlan");
-        //firePropertyChange("curSwitch");
-        
+        if (portVlan!=null) {
+            System.out.println(portVlan);
+        }
     }
 
     public String getIp() {
@@ -135,7 +118,6 @@ public class FrameWrapper extends PropertySupport {
 
     public void setSelectedSwitch(Switch selectedSwitch) {        
         curSwitch = selectedSwitch;
-        portMacs.clear();
         firePropertyChange("curSwitch");
     }
     
@@ -147,6 +129,12 @@ public class FrameWrapper extends PropertySupport {
         this.portMac = portMac;
     }
     
-   
+    public Vlan getVlanOnPort() {
+        return vlanOnPort;
+    }
+    
+    public void setVlanOnPort(Vlan vlanOnPort) {
+        this.vlanOnPort = vlanOnPort;
+    }
 
 }

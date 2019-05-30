@@ -22,7 +22,6 @@ public class NewMainJFrame extends javax.swing.JFrame {
      */
     public NewMainJFrame() throws SNMPGetException, Exception {
         initComponents();
-//        wrapper = new FrameWrapper(new Switch(fieldIp.getText(), fieldCommunity.getText()));
         wrapper = new FrameWrapper();
         ibg = new IridaBindingGroup(wrapper);
         
@@ -30,38 +29,45 @@ public class NewMainJFrame extends javax.swing.JFrame {
         ibg.add("community", fieldCommunity);
         
         ArrayList<BindingColumn> listTableVlans = new ArrayList<BindingColumn>();
-        listTableVlans.add(new BindingColumn("vlannr"));
-        listTableVlans.add(new BindingColumn("gwMacCheck"));
+        listTableVlans.add(new BindingColumn("vlanNbr"));
+        listTableVlans.add(new BindingColumn("gatewayMacCheck"));
         listTableVlans.add(new BindingColumn("macCount"));
         ibg.add("vlan", "curSwitch.vlans", listTableVlans, tableVlans);
 
         ArrayList<BindingColumn> listTableMacs = new ArrayList<BindingColumn>();
-        listTableMacs.add(new BindingColumn("adress"));
-//        ibg.add("mac", "curVlanMacs", listTableMacs, tableMacs);
+        listTableMacs.add(new BindingColumn("address"));
         ibg.add("mac", "vlan.macs", listTableMacs, tableMacs);
-
-        ArrayList<BindingColumn> listTablePortVlans = new ArrayList<BindingColumn>();
-        listTablePortVlans.add(new BindingColumn("vlannr"));
-//        ibg.add("portVlan", "curPortVlans", listTablePortVlans, tablePortVlans);
-        ibg.add("portVlan", "port.vlans", listTablePortVlans, tablePortVlans);
-
+        
+        
+        
+        
         ArrayList<BindingColumn> listTablePorts = new ArrayList<BindingColumn>();
-        listTablePorts.add(new BindingColumn("portnr"));
-        listTablePorts.add(new BindingColumn("portname"));
-        listTablePorts.add(new BindingColumn("vlanssize"));
+        listTablePorts.add(new BindingColumn("portNbr"));
+        listTablePorts.add(new BindingColumn("portName"));
+        listTablePorts.add(new BindingColumn("vlanSize"));
         listTablePorts.add(new BindingColumn("vlansString"));
         ibg.add("port", "curSwitch.ports", listTablePorts, tablePorts);
         
+
+        ArrayList<BindingColumn> listTablePortVlans = new ArrayList<BindingColumn>();
+        listTablePortVlans.add(new BindingColumn("vlanNbr"));
+        ibg.add("vlanOnPort", "port.vlans", listTablePortVlans, tablePortVlans);
+
+
+        
         ArrayList<BindingColumn> listTablePortToVlan = new ArrayList<BindingColumn>();
-        listTablePortToVlan.add(new BindingColumn("portnr"));
-        listTablePortToVlan.add(new BindingColumn("portname"));
-        listTablePortToVlan.add(new BindingColumn("vlannr"));
-        listTablePortToVlan.add(new BindingColumn("maccount"));
+        listTablePortToVlan.add(new BindingColumn("portNbr"));
+        listTablePortToVlan.add(new BindingColumn("portName"));
+        listTablePortToVlan.add(new BindingColumn("vlanNbr"));
+        listTablePortToVlan.add(new BindingColumn("macsSize"));
         ibg.add("portVlan", "curSwitch.vlanToPortList", listTablePortToVlan, tablePortToVlan);
         
         ArrayList<BindingColumn> listTableMacsPort = new ArrayList<BindingColumn>();
-        listTableMacsPort.add(new BindingColumn("adress"));
-        ibg.add("portMac", "portMacs", listTableMacsPort, tableMacsPort);
+        listTableMacsPort.add(new BindingColumn("address"));
+        ibg.add("portMac", "portVlan.macs", listTableMacsPort, tableMacsPort);
+        
+        
+        
         
 
         ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();

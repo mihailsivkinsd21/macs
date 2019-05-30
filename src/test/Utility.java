@@ -71,47 +71,18 @@ public class Utility {
         }
         return mac;
    }
-    
-   public static ArrayList<String> getAllIps(String switchIp, String community) throws SocketException, UnknownHostException, IOException, SNMPBadValueException, SNMPGetException {
-       InetAddress hostAddress = InetAddress.getByName(switchIp);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(1, hostAddress, community);
-       ArrayList<String> allips = new ArrayList();
-       allips.add(switchIp);
-       
-       String ipNow = "";
-       
-       do {
-            SNMPVarBindList newVars = comInterface.getNextMIBEntry("1.3.6.1.2.1.4.20.1.1" + ipNow);
-            String gwip = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
-            if ("0.0.0.0".equals(gwip)) {
-                break;
-            }
-            ipNow = "." + gwip;
-       } while(true);
-       return allips;
-   }
    
    public static ArrayList getPortNumbers(byte[] bytes) {
         ArrayList list = new ArrayList();
         BigInteger s = new BigInteger(bytes);
         
-        int i;
-        int b;
         int len = bytes.length * 8;
         
-        for (i = len - 1; i >=  0 ; i--) {
+        for (int i = len - 1; i >=  0 ; i--) {
             if (s.testBit(i)) {
                 list.add(len - i);
             }
         }
         return list;
     }
-   
-    
-    
-    
-    
-    
-    
-    
 }

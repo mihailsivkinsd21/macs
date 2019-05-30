@@ -31,24 +31,21 @@ public class Switch {
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
-    private ArrayList<VlanToPort> vlanToPortList = new ArrayList();
+    private ArrayList<PortVlan> vlanToPortList = new ArrayList();
     private String status = "";
         
     public Switch() {
         
     }
     
-    public void init(){
-        
-            initVlans();
-            initPorts();
-        
+    public void init() {
+        initVlans();
+        initPorts();
     }
     
     public Switch(String newhostadress, String newcommunity) {
         setIp(newhostadress);
-        setCommunity(newcommunity);
-        
+        setCommunity(newcommunity);        
     }
     
     public void setIp(String newIp) {
@@ -67,15 +64,14 @@ public class Switch {
         community = newCommunity;
     }
     
-    private boolean isStatusOk()  {
-        
+    private boolean isStatusOk() {
         boolean statusCheck = true;
         if (vlans.isEmpty()) {
             initVlans();
         }
-        
-        for (int i=0; i<vlans.size(); i++) {
-            if (!"2".equals(vlans.get(i).getVlannr())) {
+
+        for (int i = 0; i < vlans.size(); i++) {
+            if (!"2".equals(vlans.get(i).getVlanNbr())) {
                 if (!vlans.get(i).gwMacExists()) {
                     statusCheck = false;
                     break;
@@ -96,18 +92,16 @@ public class Switch {
         if (ports.isEmpty()) {
             initPorts();
         }
-        
-        for (int i=0; i<ports.size(); i++) {
+
+        for (int i = 0; i < ports.size(); i++) {
             vlanToPortList.addAll(ports.get(i).getVlansToPort());
-        }        
-        
+        }
     }
     
-    public ArrayList<VlanToPort> getVlanToPortList() {
+    public ArrayList<PortVlan> getVlanToPortList() {
         if (vlanToPortList.isEmpty()) {
             initVlanToPortList();
-        }
-        
+        }        
         return vlanToPortList;
     }
     
@@ -138,7 +132,7 @@ public class Switch {
             
             for (int i=0; i<vlans.size(); i++) {
                 for (int j=0; j<ports.size(); j++) {
-                    if (vlans.get(i).portExists(ports.get(j).getPortnr())) {
+                    if (vlans.get(i).portExists(ports.get(j).getPortNbr())) {
                         ports.get(j).addVlan(vlans.get(i));
                     }
                 }
@@ -165,9 +159,7 @@ public class Switch {
             InetAddress hostAddress = InetAddress.getByName(ip);
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
-            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");
-            //System.out.println(newVars.toString());
-            //int size = newVars.size();
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.4.3.1.1");            
             String gwMac = getGwMac();
             
             for (int i = 0; i<newVars.size(); i++) {
@@ -181,7 +173,6 @@ public class Switch {
                 } else {
                     break;
                 }
-                //System.out.println(vlans.get(i));
             }
             comInterface.closeConnection();
         } catch (Exception ex) {

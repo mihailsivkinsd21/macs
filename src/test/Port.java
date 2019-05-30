@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package test;
+
 import snmp.*;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -20,86 +21,92 @@ import snmp.*;
 import java.util.*;
 import java.math.*;
 import java.net.*;
+
 /**
  *
  * @author Praktikant
  */
 public class Port {
-    
-    private String portname;
-    private int portnr;
-    private int vlanscount;
-    private String swip;
+
+    private String portName;
+    private int portNbr;
+
+    private String switchIp;
     private String community;
     ArrayList<Vlan> vlans = new ArrayList();
-    ArrayList<VlanToPort> vlansToPort = new ArrayList();
-    private int vlanssize;
+    ArrayList<PortVlan> portVlans = new ArrayList();
+    
+    private static final int VLAN_STRING_SIZE = 5;
+    
+    public Port() {
+    }
     
     public Port(String oid, String value) {
-        portname = value;
-        portnr = oidToPortnr(oid);
+        portName = value;
+        portNbr = oidToPortNbr(oid);
     }
-    
-    public ArrayList<VlanToPort> getVlansToPort() {
-        
-        if (vlansToPort.isEmpty()) {
-            for (int i=0; i<vlans.size(); i++) {
-                vlansToPort.add(new VlanToPort(vlans.get(i).getVlannr(), vlans.get(i).getMacs(), portnr, portname));
+
+    public ArrayList<PortVlan> getVlansToPort() {
+
+        if (portVlans.isEmpty()) {
+            for (int i = 0; i < vlans.size(); i++) {
+                portVlans.add(new PortVlan(vlans.get(i).getVlanNbr(), vlans.get(i).getMacs(), portNbr, portName));
             }
         }
-        
-        return vlansToPort;
+
+        return portVlans;
     }
-    
+
     public String getVlansString() {
         //для поля в таблице с портами, где отображаются вланы
         String result = "";
-        if (vlans.size()>5) {
-            for (int i=0; i<5; i++) {
-                result = result + vlans.get(i).getVlannr() + " , ";
+        for (Vlan v : getVlansForString()) {
+            if (!result.isEmpty()) {
+                result += ", ";
             }
-            result = result + "...";
-        } else {
-            for (int i=0; i<vlans.size(); i++) {
-                result = result + vlans.get(i).getVlannr();
-                if ((vlans.size()-1)!=i) {
-                    result = result + " , ";
-                }
-            }
+            result += v.getVlanNbr();
+        }
+        if (vlans.size() > VLAN_STRING_SIZE) {
+            result += "...";
         }
         return result;
     }
     
+    private List<Vlan> getVlansForString(){
+        if(vlans.size() > VLAN_STRING_SIZE){
+            return vlans.subList(0, VLAN_STRING_SIZE);
+        }
+        return vlans;
+    }
+
     public void addVlan(String vlannr, String swip, String community) { //GOVNO
-        vlans.add(new Vlan(vlannr,swip,community));
-        vlanssize++;
+        vlans.add(new Vlan(vlannr, swip, community));
     }
-    
-    public void addVlan(Vlan newvlan) {
-        vlans.add(newvlan);
-        vlanssize++;
+
+    public void addVlan(Vlan newVlan) {
+        vlans.add(newVlan);
+
     }
-    
-    public int getVlanssize() {
-        return vlanssize;
+
+    public int getVlanSize() {
+        return vlans.size();
     }
-    
+
     public ArrayList<Vlan> getVlans() {
         return vlans;
     }
-    
-    public int getPortnr() {
-        return portnr;
+
+    public int getPortNbr() {
+        return portNbr;
     }
-    
-    public String getPortname() {
-        return portname;
+
+    public String getPortName() {
+        return portName;
     }
-    
-    private int oidToPortnr(String oid) {
-        String [] parts = oid.split("\\.");
-        return Integer.parseInt(parts[parts.length-1]);
+
+    private int oidToPortNbr(String oid) {
+        String[] parts = oid.split("\\.");
+        return Integer.parseInt(parts[parts.length - 1]);
     }
-   
-    
+
 }

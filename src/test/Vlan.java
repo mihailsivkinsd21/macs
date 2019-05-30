@@ -26,13 +26,13 @@ import java.net.*;
  * @author Praktikant
  */
 public class Vlan extends PropertySupport {
-    
-    private String vlannr;
-    private String swip;
+
+    private String vlanNbr;
+    private String switchIp;
     private String community;
-    private String gwMac;
+    private String gatewayMac;
     //private String port;
-    private String gwMacCheck = "";
+    private String gatewayMacCheck = "";
     private int version;
     private int macCount; 
     private ArrayList<Mac> macs = new ArrayList();
@@ -43,50 +43,41 @@ public class Vlan extends PropertySupport {
     }
     
     public Vlan(String vlan, String swip){
-        this.vlannr = vlan;
-        this.swip = swip;
+        this.vlanNbr = vlan;
+        this.switchIp = swip;
     }
     
     public Vlan(String vlannr, String swip, String community) {
-        this.vlannr = vlannr;
-        this.swip = swip;
+        this.vlanNbr = vlannr;
+        this.switchIp = swip;
         this.community = community;
     }
     
     
     public Vlan(String oid, String newswip, String newcommunity, int newversion, String newGwMac) {
-        vlannr = oidToVlan(oid);
-        swip = newswip;
+        vlanNbr = oidToVlan(oid);
+        switchIp = newswip;
         community = newcommunity;
         version = newversion;
-        gwMac = newGwMac;
+        gatewayMac = newGwMac;
         initMacs();
     }
     
-    /*
-    public Vlan() {
-        
+    public static Vlan create(String string) {
+        Vlan v = new Vlan();
+        v.setVlanNbr(string);
+        return v;
     }
-    */
-    
-    
+     
     public boolean gwMacExists() {
-      
-        /*
-        if (macs.isEmpty()) {
-            initMacs();
-        }
-                */
         boolean check = false;
-        for (int i=0; i<macs.size(); i++) {
-            String checkmac = macs.get(i).getAdress();
-            if (checkmac.equals(gwMac)) {
+        for (int i = 0; i < macs.size(); i++) {
+            String checkmac = macs.get(i).getAddress();
+            if (checkmac.equals(gatewayMac)) {
                 check = true;
                 break;
             }
         }
-                   
-        
         return check;
     }
     
@@ -95,9 +86,9 @@ public class Vlan extends PropertySupport {
         
         try {
             ports.clear();
-            InetAddress hostAddress = InetAddress.getByName(swip);
+            InetAddress hostAddress = InetAddress.getByName(switchIp);
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-            SNMPVarBindList memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.4." + vlannr);
+            SNMPVarBindList memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.4." + vlanNbr);
             
             SNMPSequence pair = (SNMPSequence) memberPorts.getSNMPObjectAt(0);
             
@@ -116,7 +107,7 @@ public class Vlan extends PropertySupport {
             
             
             
-            memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.2." + vlannr);
+            memberPorts = comInterface.getMIBEntry("1.3.6.1.2.1.17.7.1.4.3.1.2." + vlanNbr);
             pair = (SNMPSequence) memberPorts.getSNMPObjectAt(0);
             
             byte[] tg = (byte[]) pair.getSNMPObjectAt(1).getValue();
@@ -147,14 +138,14 @@ public class Vlan extends PropertySupport {
          
     }
     
-    public ArrayList getPorts() throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+    public ArrayList getPorts() {
         if (ports.isEmpty()) {
             initPorts();
         }
         return ports;
     }
     
-    public boolean portExists(int port) throws SocketException, IOException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+    public boolean portExists(int port)  {
         if (ports.isEmpty()) {
             initPorts();
         }
@@ -172,9 +163,9 @@ public class Vlan extends PropertySupport {
 
         try {
             macs.clear();
-            InetAddress hostAddress = InetAddress.getByName(swip);
+            InetAddress hostAddress = InetAddress.getByName(switchIp);
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.2.2.1.2." + vlannr);
+            SNMPVarBindList newVars = comInterface.retrieveMIBTable("1.3.6.1.2.1.17.7.1.2.2.1.2." + vlanNbr);
 
             for (int i = 0; i < newVars.size(); i++) {
                 //String s = String.valueOf(((SNMPSequence)newVars.getSNMPObjectAt(i)).getSNMPObjectAt(0));
@@ -186,9 +177,9 @@ public class Vlan extends PropertySupport {
 
             macCount = macs.size();
             if (gwMacExists()) {
-                gwMacCheck = gwMac;
+                gatewayMacCheck = gatewayMac;
             } else {
-                gwMacCheck = "";
+                gatewayMacCheck = "";
             }
         } catch (Exception ex) {
            throw new RuntimeException(ex);
@@ -196,24 +187,24 @@ public class Vlan extends PropertySupport {
 
     }
 
-    public String getVlannr() {
-        return vlannr;
+    public String getVlanNbr() {
+        return vlanNbr;
     }
 
-    public void setVlannr(String vlannr) {
-        this.vlannr = vlannr;
+    public void setVlanNbr(String vlannr) {
+        this.vlanNbr = vlannr;
     }
     
-    public String getSwip() {
-        return swip;
+    public String getSwitchIp() {
+        return switchIp;
     }
     
-    public String getGwMac() throws IOException, SocketException, UnknownHostException, SNMPBadValueException, SNMPGetException {
-        return gwMac;
+    public String getGatewayMac() throws IOException, SocketException, UnknownHostException, SNMPBadValueException, SNMPGetException {
+        return gatewayMac;
     }
     
-    public String getGwMacCheck() {
-        return gwMacCheck;
+    public String getGatewayMacCheck() {
+        return gatewayMacCheck;
     }
     
     
