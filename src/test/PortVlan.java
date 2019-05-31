@@ -20,7 +20,7 @@ public class PortVlan {
     public PortVlan() {
     }
     
-    public PortVlan(String vlannr, ArrayList<Mac> macs, int portNbr, String portName) {
+    public PortVlan(String vlannr, List<Mac> macs, int portNbr, String portName) {
         this.vlanNbr = vlannr;
         this.macs = macs;
         this.portNbr = portNbr;

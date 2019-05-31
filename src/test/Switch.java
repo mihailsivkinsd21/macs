@@ -80,37 +80,36 @@ public class Switch {
         community = newCommunity;
     }
     
-    private boolean isStatusOk() {
+    private String getStatus() {
         boolean statusCheck = true;
         if (vlans.isEmpty()) {
             initVlans();
         }
 
-        for (int i = 0; i < vlans.size(); i++) {
-            if (!"2".equals(vlans.get(i).getVlanNbr())) {
-                if (!vlans.get(i).gwMacExists()) {
+        for (Vlan v: vlans) {
+            if (!"2".equals(v.getVlanNbr())) {
+                if (!v.gwMacExists()) {
                     statusCheck = false;
                     break;
                 }
             }
         }
-        return statusCheck;
-    }
-    
-    public String getStatus() {
-        if (isStatusOk()) {
+        
+        if (statusCheck) {
             return "OK";
         }
         return "NOT OK";
     }
+    
+    
     
     private void initVlanToPortList() {
         if (ports.isEmpty()) {
             initPorts();
         }
         vlanToPortList.clear();
-        for (int i = 0; i < ports.size(); i++) {
-            vlanToPortList.addAll(ports.get(i).getPortVlans());
+        for (Port port : ports) {
+            vlanToPortList.addAll(port.getPortVlans());
         }
     }
     

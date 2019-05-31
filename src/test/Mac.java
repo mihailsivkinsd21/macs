@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package test;
+
 import snmp.*;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -20,25 +21,26 @@ import snmp.*;
 import java.util.*;
 import java.math.*;
 import java.net.*;
+
 /**
  *
  * @author Praktikant
  */
 public class Mac {
-    
+
     private String address;
-    
-    public Mac() {        
+
+    public Mac() {
     }
-    
+
     public Mac(String oid) {
         address = oidToMac(oid);
     }
-    
+
     public String getAddress() {
         return address;
     }
-    
+
     public String oidToMac(String oid) {
         String[] parts = oid.split("\\.");
         String macDec = "";
@@ -50,24 +52,25 @@ public class Mac {
         }
         return macToHex(macDec).toUpperCase();
     }
-    
-    private String macToHex(String str) {
+
+    public String macToHex(String str) {
         try {
             String separator = ":";
             String result = "";
             String[] macParts = str.trim().split("\\:");
-            for (int i = 0; i < macParts.length; i++) {
-                Integer dec = Integer.parseInt(macParts[i]);
+            for (String m : macParts) {
+                Integer dec = Integer.parseInt(m);
                 String hexOctet = Integer.toHexString(dec);
                 if (hexOctet.length() < 2) {
                     hexOctet = "0" + hexOctet;
                 }
                 
-                if (i < 5) {
-                    result += hexOctet + separator;
-                } else {
-                    result += hexOctet;
+                //result += hexOctet;
+                if (!result.isEmpty()) {
+                    result = result + separator;
                 }
+                result += hexOctet;
+
             }
             //result.toLowerCase();
             return result;
@@ -101,5 +104,5 @@ public class Mac {
         }
         return true;
     }
-    
+
 }

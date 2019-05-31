@@ -11,6 +11,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  *
@@ -22,8 +23,8 @@ public class MainInterfaceWrapper extends PropertySupport {
     private Vlan vlan = null;
     private Mac mac = null;
     private Port port = null;
-    private PortVlan portVlan = null;
-    private Vlan vlanOnPort;
+    private Vlan vlanOnPort = null;
+    private PortVlan portToVlan = null;
     private Mac portMac = null;
     
     private Switch curSwitch = null;
@@ -34,6 +35,64 @@ public class MainInterfaceWrapper extends PropertySupport {
     
     public MainInterfaceWrapper() {
         
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.switches);
+        hash = 97 * hash + Objects.hashCode(this.vlan);
+        hash = 97 * hash + Objects.hashCode(this.mac);
+        hash = 97 * hash + Objects.hashCode(this.port);
+        hash = 97 * hash + Objects.hashCode(this.vlanOnPort);
+        hash = 97 * hash + Objects.hashCode(this.portToVlan);
+        hash = 97 * hash + Objects.hashCode(this.portMac);
+        hash = 97 * hash + Objects.hashCode(this.curSwitch);
+        hash = 97 * hash + Objects.hashCode(this.ip);
+        hash = 97 * hash + Objects.hashCode(this.community);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MainInterfaceWrapper other = (MainInterfaceWrapper) obj;
+        if (!Objects.equals(this.switches, other.switches)) {
+            return false;
+        }
+        if (!Objects.equals(this.vlan, other.vlan)) {
+            return false;
+        }
+        if (!Objects.equals(this.mac, other.mac)) {
+            return false;
+        }
+        if (!Objects.equals(this.port, other.port)) {
+            return false;
+        }
+        if (!Objects.equals(this.vlanOnPort, other.vlanOnPort)) {
+            return false;
+        }
+        if (!Objects.equals(this.portToVlan, other.portToVlan)) {
+            return false;
+        }
+        if (!Objects.equals(this.portMac, other.portMac)) {
+            return false;
+        }
+        if (!Objects.equals(this.curSwitch, other.curSwitch)) {
+            return false;
+        }
+        if (!Objects.equals(this.ip, other.ip)) {
+            return false;
+        }
+        if (!Objects.equals(this.community, other.community)) {
+            return false;
+        }
+        return true;
     }
         
     
@@ -53,13 +112,36 @@ public class MainInterfaceWrapper extends PropertySupport {
         }
     }    
     
-    public Port getPort() {        
+    public Port getPort() {  
+        //System.out.println(port);
         return port;
+        //System.out.println(port);
+    }
+    
+    public PortVlan getPortToVlan() {
+        //System.out.println(portToVlan);
+        return portToVlan;
+    }
+    
+    
+    public void setPortToVlan(PortVlan portToVlan) {
+        this.portToVlan = portToVlan;
+        //System.out.println(portToVlan);
+        firePropertyChange("portToVlan");
+    }
+    
+    public Mac getPortMac() {
+        return portMac;
+    }
+    
+    public void setPortMac(Mac portMac) {
+        this.portMac = portMac;
     }
     
     public void setPort(Port port) {
         this.port = port;
         firePropertyChange("port");
+        //System.out.println(port);
     }
     
     public void refreshCurSwitch() {
@@ -98,16 +180,11 @@ public class MainInterfaceWrapper extends PropertySupport {
 
     public void setCurSwitch(Switch curSwitch) {
         this.curSwitch = curSwitch;
+        firePropertyChange("curSwitch");
+        
     }
     
-    public PortVlan getPortVlan() {        
-        return portVlan;
-    }
     
-    public void setPortVlan(PortVlan newportVlan) {
-        this.portVlan = newportVlan;  
-        firePropertyChange("portVlan");
-    }
 
     public String getIp() {
         return ip;
@@ -134,13 +211,7 @@ public class MainInterfaceWrapper extends PropertySupport {
         firePropertyChange("curSwitch");
     }
     
-    public Mac getPortMac() {
-        return portMac;
-    }
     
-    public void setPortMac(Mac portMac) {
-        this.portMac = portMac;
-    }
     
     public Vlan getVlanOnPort() {
         return vlanOnPort;

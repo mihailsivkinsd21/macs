@@ -29,6 +29,14 @@ public class MainInterface extends javax.swing.JFrame {
         ibg.add("ip", fieldIp);
         ibg.add("community", fieldCommunity);
         
+        ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();
+        listTableSwitches.add(new BindingColumn("ip"));
+        listTableSwitches.add(new BindingColumn("model"));
+        listTableSwitches.add(new BindingColumn("gatewayMac"));
+        //listTableSwitches.add(new BindingColumn("status"));
+        ibg.add("selectedSwitch", "switches", listTableSwitches, tableSwitches);
+        
+        
         ArrayList<BindingColumn> listTableVlans = new ArrayList<BindingColumn>();
         listTableVlans.add(new BindingColumn("vlanNbr"));
         listTableVlans.add(new BindingColumn("gatewayMacCheck"));
@@ -52,32 +60,22 @@ public class MainInterface extends javax.swing.JFrame {
         ArrayList<BindingColumn> listTablePortVlans = new ArrayList<BindingColumn>();
         listTablePortVlans.add(new BindingColumn("vlanNbr"));
         ibg.add("vlanOnPort", "port.vlans", listTablePortVlans, tablePortVlans);
-
-
         
+        
+
         ArrayList<BindingColumn> listTablePortToVlan = new ArrayList<BindingColumn>();
         listTablePortToVlan.add(new BindingColumn("portNbr"));
         listTablePortToVlan.add(new BindingColumn("portName"));
         listTablePortToVlan.add(new BindingColumn("vlanNbr"));
         listTablePortToVlan.add(new BindingColumn("macsSize"));
-        ibg.add("portVlan", "curSwitch.vlanToPortList", listTablePortToVlan, tablePortToVlan);
+        ibg.add("portToVlan", "curSwitch.vlanToPortList", listTablePortToVlan, tablePortToVlan);
         
         ArrayList<BindingColumn> listTableMacsPort = new ArrayList<BindingColumn>();
         listTableMacsPort.add(new BindingColumn("address"));
-        ibg.add("portMac", "portVlan.macs", listTableMacsPort, tableMacsPort);
+        ibg.add("portMac", "portToVlan.macs", listTableMacsPort, tableMacsPort);
         
         
-        
-        
-
-        ArrayList<BindingColumn> listTableSwitches = new ArrayList<BindingColumn>();
-        listTableSwitches.add(new BindingColumn("ip"));
-        listTableSwitches.add(new BindingColumn("model"));
-        listTableSwitches.add(new BindingColumn("gatewayMac"));
-        //listTableSwitches.add(new BindingColumn("status"));
-        ibg.add("selectedSwitch", "switches", listTableSwitches, tableSwitches);
-        
-
+       
         ibg.bind();
 
     }
