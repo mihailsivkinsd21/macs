@@ -31,68 +31,10 @@ public class MainInterfaceWrapper extends PropertySupport {
                 
     private String ip = "172.27.78.237";
     private String community = "bcomsnmpadmin";
-    
+    List<PortVlan> vlanToPortList = ObservableCollections.observableList(new ArrayList<PortVlan>());
     
     public MainInterfaceWrapper() {
         
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.switches);
-        hash = 97 * hash + Objects.hashCode(this.vlan);
-        hash = 97 * hash + Objects.hashCode(this.mac);
-        hash = 97 * hash + Objects.hashCode(this.port);
-        hash = 97 * hash + Objects.hashCode(this.vlanOnPort);
-        hash = 97 * hash + Objects.hashCode(this.portToVlan);
-        hash = 97 * hash + Objects.hashCode(this.portMac);
-        hash = 97 * hash + Objects.hashCode(this.curSwitch);
-        hash = 97 * hash + Objects.hashCode(this.ip);
-        hash = 97 * hash + Objects.hashCode(this.community);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MainInterfaceWrapper other = (MainInterfaceWrapper) obj;
-        if (!Objects.equals(this.switches, other.switches)) {
-            return false;
-        }
-        if (!Objects.equals(this.vlan, other.vlan)) {
-            return false;
-        }
-        if (!Objects.equals(this.mac, other.mac)) {
-            return false;
-        }
-        if (!Objects.equals(this.port, other.port)) {
-            return false;
-        }
-        if (!Objects.equals(this.vlanOnPort, other.vlanOnPort)) {
-            return false;
-        }
-        if (!Objects.equals(this.portToVlan, other.portToVlan)) {
-            return false;
-        }
-        if (!Objects.equals(this.portMac, other.portMac)) {
-            return false;
-        }
-        if (!Objects.equals(this.curSwitch, other.curSwitch)) {
-            return false;
-        }
-        if (!Objects.equals(this.ip, other.ip)) {
-            return false;
-        }
-        if (!Objects.equals(this.community, other.community)) {
-            return false;
-        }
-        return true;
     }
         
     
@@ -112,6 +54,10 @@ public class MainInterfaceWrapper extends PropertySupport {
             firePropertyChange("curSwitch");
         } catch (Exception ex) {
             Utility.showTimeoutError();
+            throw new RuntimeException(ex);
+            //switches.clear();
+            //firePropertyChange("switches");
+            //firePropertyChange("curSwitch");
         }
     }    
     
@@ -148,12 +94,12 @@ public class MainInterfaceWrapper extends PropertySupport {
     }
     
     public void refreshCurSwitch() {
-        try {
-            curSwitch.init();
-            firePropertyChange("curSwitch");
-        } catch (Exception ex) {
-            Utility.showTimeoutError();
-        }
+        //Switch refrSwitch = curSwitch;
+        //System.out.println(refrSwitch.getIp());
+        //refrSwitch.init();
+        curSwitch.init();
+        setCurSwitch(null);
+        firePropertyChange("curSwitch");
     }
     
     public Mac getMac() {
@@ -178,13 +124,29 @@ public class MainInterfaceWrapper extends PropertySupport {
     }
 
     public Switch getCurSwitch() {
+        //if(curSwitch != null){
+                //System.out.println("4 " + this.curSwitch.getIp());
+           // }
         return curSwitch;
     }
 
     public void setCurSwitch(Switch curSwitch) {
-        this.curSwitch = curSwitch;
-        firePropertyChange("curSwitch");
-        
+        //System.out.println("1");
+        try {
+//            if(curSwitch != null){
+//               System.out.println("2 " + curSwitch.getIp() + " " + curSwitch.equals(this.curSwitch));
+//            }
+            this.curSwitch = curSwitch;
+            //System.out.println("1");
+            firePropertyChange("curSwitch", null, new Object());
+            //System.out.println("1");
+        } catch (Exception ex) {
+            //System.out.println("3");
+            Utility.showTimeoutError();
+            throw new RuntimeException(ex);
+            //Utility.showTimeoutError();
+        }
+        //System.out.println("");
     }
     
     
@@ -205,14 +167,21 @@ public class MainInterfaceWrapper extends PropertySupport {
         this.community = community;
     }
 
-    public Switch getSelectedSwitch() {
-        return null;
-    }
-
-    public void setSelectedSwitch(Switch selectedSwitch) {        
-        curSwitch = selectedSwitch;
-        firePropertyChange("curSwitch");
-    }
+//    public Switch getSelectedSwitch() {
+//        return null;
+//    }
+//
+//    public void setSelectedSwitch(Switch selectedSwitch) {
+//        try {
+//            curSwitch = selectedSwitch;
+//            System.out.println(curSwitch);
+//            firePropertyChange("curSwitch");
+//            System.out.println(curSwitch);
+//        } catch (Exception ex) {
+//            System.out.println("3");
+//            Utility.showTimeoutError();
+//        }
+//    }
     
     
     

@@ -16,6 +16,7 @@ public class PortVlan {
     private List<Mac> macs = new ArrayList<Mac>();
     private int portNbr;
     private String portName;
+    //private int macsSize;
 
     public PortVlan() {
     }
@@ -48,8 +49,10 @@ public class PortVlan {
     }
     
     public int getMacsSize() {
+        //System.out.println(this.portNbr);
         return macs.size();
     }
+    
 
     @Override
     public int hashCode() {
@@ -75,6 +78,9 @@ public class PortVlan {
             return false;
         }
         if (!Objects.equals(this.vlanNbr, other.vlanNbr)) {
+            return false;
+        }
+        if (!Objects.equals(this.getMacsSize(), other.getMacsSize())) {
             return false;
         }
         return true;

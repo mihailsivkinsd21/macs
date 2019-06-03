@@ -28,8 +28,8 @@ public class Switch {
 
     
     
-    private String  ip = "172.27.78.237";
-    private String community = "bcomsnmpadmin";
+    private String  ip ;
+    private String community;
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
@@ -93,7 +93,7 @@ public class Switch {
         community = newCommunity;
     }
     
-    private String getStatus() {
+    public String getStatus() {
         boolean statusCheck = true;
         if (vlans.isEmpty()) {
             initVlans();
@@ -123,6 +123,7 @@ public class Switch {
         vlanToPortList.clear();
         for (Port port : ports) {
             vlanToPortList.addAll(port.getPortVlans());
+            //System.out.println(port.getPortNbr());
         }
     }
     
@@ -273,17 +274,11 @@ public class Switch {
         return "";
        
     }
-    
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 71 * hash + Objects.hashCode(this.ip);
-        hash = 71 * hash + Objects.hashCode(this.community);
-        hash = 71 * hash + this.version;
-        hash = 71 * hash + Objects.hashCode(this.vlans);
-        hash = 71 * hash + Objects.hashCode(this.ports);
-        hash = 71 * hash + Objects.hashCode(this.vlanToPortList);
-        hash = 71 * hash + Objects.hashCode(this.status);
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.ip);
         return hash;
     }
 
@@ -299,25 +294,29 @@ public class Switch {
         if (!Objects.equals(this.ip, other.ip)) {
             return false;
         }
+        
         if (!Objects.equals(this.community, other.community)) {
             return false;
         }
-        if (this.version != other.version) {
-            return false;
-        }
-        if (!Objects.equals(this.vlans, other.vlans)) {
-            return false;
-        }
-        if (!Objects.equals(this.ports, other.ports)) {
-            return false;
-        }
-        if (!Objects.equals(this.vlanToPortList, other.vlanToPortList)) {
-            return false;
-        }
-        if (!Objects.equals(this.status, other.status)) {
-            return false;
-        }
+        
+//        if (!Objects.equals(this.vlans, other.vlans)) {
+//            return false;
+//        }
+//        
+//        if (!Objects.equals(this.ports, other.ports)) {
+//            return false;
+//        }
+//        
+//        if (!Objects.equals(this.vlanToPortList, other.vlanToPortList)) {
+//            return false;
+//        }
+                
+        
+        
+        
         return true;
     }
+    
+    
 
 }

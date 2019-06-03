@@ -94,21 +94,24 @@ public class Utility {
     }
    
    
-   public static boolean checkPorts(Port upport, Port downport) { 
+   public static boolean checkPorts(Port upport, Switch downswitch) { 
        
        boolean check = false;
+       ArrayList <Vlan> upportVlans = upport.getVlans();
+       ArrayList <Port> downswitchPorts = downswitch.getPorts();
        
-       ArrayList<Vlan> downportVlans = downport.getVlans();
-       ArrayList<Vlan> upportVlans = upport.getVlans();
-       
-       for (Vlan d: downportVlans) {
-           for (Vlan u: upportVlans) {
+       for (Port p: downswitchPorts) {
+           ArrayList <Vlan> downportVlans = p.getVlans();      
+           for (Vlan d: downportVlans) {
                check = false;
-               if (d.getVlanNbr().equals(u.getVlanNbr())) {
-                   check = true;
-                   break;
+               for (Vlan u: upportVlans) {
+                   if (d.getVlanNbr().equals(u.getVlanNbr())) {
+                       check= true;
+                       break;
+                   }
                }
-           }
+               if (!check) { break; }
+           }  
        }
        
        return check;

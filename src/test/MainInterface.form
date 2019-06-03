@@ -26,16 +26,16 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane6" alignment="0" pref="516" max="32767" attributes="0"/>
+                  <Component id="jScrollPane6" alignment="0" pref="530" max="32767" attributes="0"/>
                   <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
                   <Component id="jScrollPane1" max="32767" attributes="0"/>
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" pref="413" max="32767" attributes="0"/>
-                  <Component id="jScrollPane4" pref="413" max="32767" attributes="0"/>
-                  <Component id="jScrollPane7" alignment="0" pref="413" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" pref="399" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" pref="399" max="32767" attributes="0"/>
+                  <Component id="jScrollPane7" alignment="0" pref="399" max="32767" attributes="0"/>
                   <Component id="jScrollPane5" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -171,16 +171,16 @@
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="refreshSwitch" pref="94" max="32767" attributes="0"/>
-                      <Component id="fieldIp" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="refreshSwitch" min="-2" pref="94" max="-2" attributes="0"/>
+                      <Component id="fieldIp" min="-2" pref="121" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="fieldCommunity" min="-2" pref="106" max="-2" attributes="0"/>
                       <Component id="checkBtn" min="-2" pref="105" max="-2" attributes="0"/>
+                      <Component id="fieldCommunity" min="-2" pref="154" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>

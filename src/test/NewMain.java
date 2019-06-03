@@ -34,8 +34,8 @@ public class NewMain {
      * @param args the command line arguments
      */
     
-    public static final int UPPORT_NBR = 27;
-    public static final int DWNPORT_NBR = 26;
+    public static final int UPPORT_NBR = 26;
+    public static final int DWNPORT_NBR = 27;
     
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
@@ -44,9 +44,11 @@ public class NewMain {
         
         int rep = 0;
         do {
-            Switch swup = new Switch("172.27.78.237", "bcomsnmpadmin");
-            Switch swdown = new Switch ("172.27.78.196", "bcomsnmpadmin");
             
+            Switch sw = new Switch("172.27.78.237", "bcomsnmpadmin");
+            //Switch swdown = new Switch ("172.27.78.196", "bcomsnmpadmin");
+            
+            /*
             ArrayList <Vlan> portupvlans = swup.getPorts().get(UPPORT_NBR).getVlans();
             ArrayList <Vlan> portdownvlans = swdown.getPorts().get(DWNPORT_NBR).getVlans();
             
@@ -57,9 +59,13 @@ public class NewMain {
             for (Vlan v: portdownvlans) {
                 System.out.println(v.getVlanNbr());
             }
+            */
+            //sw.initVlanToPortList();
+            for (PortVlan p: sw.getVlanToPortList()) {
+                System.out.println(p.getPortNbr() + "  " + p.getVlanNbr());
+            }
             
-            
-            System.out.println(Utility.checkPorts(swup.getPorts().get(UPPORT_NBR), swdown.getPorts().get(DWNPORT_NBR)));
+            //System.out.println(Utility.checkPorts(swup.getPorts().get(UPPORT_NBR), swdown));
             
             
             //System.out.println(sw.getStatus());
