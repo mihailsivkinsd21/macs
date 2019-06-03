@@ -92,4 +92,25 @@ public class Utility {
         }
         return list;
     }
+   
+   
+   public static boolean checkPorts(Port upport, Port downport) { 
+       
+       boolean check = false;
+       
+       ArrayList<Vlan> downportVlans = downport.getVlans();
+       ArrayList<Vlan> upportVlans = upport.getVlans();
+       
+       for (Vlan d: downportVlans) {
+           for (Vlan u: upportVlans) {
+               check = false;
+               if (d.getVlanNbr().equals(u.getVlanNbr())) {
+                   check = true;
+                   break;
+               }
+           }
+       }
+       
+       return check;
+   }
 }

@@ -47,6 +47,13 @@ public class Switch {
     private final String OID_GATEWAY_IP_3100TG = "1.3.6.1.2.1.4.24.4.1.4.0.0.0.0.0.0.0.0.0";
     private final String OID_GATEWAY_IP_DLINK1210 = "1.3.6.1.4.1.171.10.76.28.1.42.1.1.4";
     
+    private final String OID_GWMAC_ZYXEL = "1.3.6.1.2.1.4.35.1.4.20001.1.4.";
+    private final String OID_GWMAC_DLINK = "1.3.6.1.2.1.4.35.1.4.5121.1.4.";
+    private final String OID_GWMAC_DLINK3010 = "1.3.6.1.2.1.4.22.1.2.5121.";
+    private final String OID_GWMAC_DLINK3526 = "1.3.6.1.2.1.4.22.1.2.5120.";
+    private final String OID_GWMAC_DLINK3100 = "1.3.6.1.2.1.4.22.1.2.100016.";
+   // private final String OID_GWMAC_
+    
    
         
     public Switch() {
@@ -54,8 +61,14 @@ public class Switch {
     }
     
     public void init() {
-        initVlans();
-        initPorts();
+        //vlans.clear();
+        //ports.clear();
+        //vlanToPortList.clear();
+        //initVlans();
+        //initPorts();
+        vlans.clear();
+        ports.clear();
+        vlanToPortList.clear();
         initVlanToPortList();
     }
     
@@ -221,7 +234,7 @@ public class Switch {
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
             SNMPVarBindList newVars;
-            if (getModel().contains("DGS-3100-24TG") || getModel().contains("AT-8000")) {
+            if (getModel().contains("DGS-3100-24TG") || getModel().contains("AT-8000S")) {
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_3100TG);
             } else if(getModel().contains("DGS-1210")) {
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_DLINK1210);
@@ -237,11 +250,18 @@ public class Switch {
             
             
             
-            if (getModel().contains("DGS-3420")) {
-                newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.22.1.2.5121." + gwip);
-            } else {
-                newVars = comInterface.getMIBEntry("1.3.6.1.2.1.4.35.1.4.20001.1.4." + gwip);
+            if (getModel().contains("GS22")) {
+                newVars = comInterface.getMIBEntry(OID_GWMAC_ZYXEL + gwip);
+            } else if (getModel().contains("3010") || getModel().contains("DGS-1210") || getModel().contains("AT-8000S")) {
+                newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK3010 + gwip);
+            } else if (getModel().contains("3526")) {
+                newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK3526 + gwip);
+            } else if (getModel().contains("DGS-3100-24TG"))
+                newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK3100 + gwip);        
+            else {
+                newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK + gwip);
             }
+            //System.out.println(newVars.getSNMPObjectAt(0).toString());
             
             
             comInterface.closeConnection();
