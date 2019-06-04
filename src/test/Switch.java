@@ -52,6 +52,7 @@ public class Switch {
     private final String OID_GWMAC_DLINK3010 = "1.3.6.1.2.1.4.22.1.2.5121.";
     private final String OID_GWMAC_DLINK3526 = "1.3.6.1.2.1.4.22.1.2.5120.";
     private final String OID_GWMAC_DLINK3100 = "1.3.6.1.2.1.4.22.1.2.100016.";
+    private final String OID_GWMAC_AT8000S = "1.3.6.1.2.1.4.22.1.2.100002.";
    // private final String OID_GWMAC_
     
    
@@ -267,27 +268,23 @@ public class Switch {
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP);
             }
             String gwip = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
-            //System.out.println(gwip);
-//            if ("".equals(gwip)) {
-//                return "INCORRECT IP";
-//            }
-            
-            
-            
+
             
             if (getModel().contains("GS22")) {
                 newVars = comInterface.getMIBEntry(OID_GWMAC_ZYXEL + gwip);
-            } else if (getModel().contains("3010") || getModel().contains("DGS-1210") || getModel().contains("AT-8000S")) {
+            } else if (getModel().contains("3010") || getModel().contains("DGS-1210")) {
                 newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK3010 + gwip);
             } else if (getModel().contains("3526")) {
                 newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK3526 + gwip);
             } else if (getModel().contains("DGS-3100-24TG"))
                 newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK3100 + gwip);        
-            else {
+            else if (getModel().contains("AT-8000S")) {
+                newVars = comInterface.getMIBEntry(OID_GWMAC_AT8000S + gwip);
+            } else {
                 newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK + gwip);
             }
             
-            //System.out.println(Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0)));
+            //System.out.println(newVars.getSNMPObjectAt(0).toString());
             
             
             comInterface.closeConnection();

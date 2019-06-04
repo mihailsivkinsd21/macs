@@ -45,11 +45,13 @@ public class MainInterfaceWrapper extends PropertySupport {
             
             switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
+            switches.add(new Switch("172.25.2.236", "bcomsnmpadmin"));
             //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.72.110", "bcomsnmpadmin"));
             switches.add(new Switch("172.16.131.2", "bcomsnmpadmin"));
             switches.add(new Switch("172.20.3.77", "bcomsnmpadmin"));
+            switches.add(new Switch("172.27.64.118", "bcomsnmpadmin"));
             //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             firePropertyChange("curSwitch");
         } catch (Exception ex) {
