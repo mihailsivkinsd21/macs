@@ -290,8 +290,14 @@ public class MainInterface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void checkBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBtnActionPerformed
-       wrapper.checkSwitch();
-       refreshSwitch.setEnabled(true);
+       try {
+          wrapper.checkSwitch();
+          refreshSwitch.setEnabled(true);
+       } catch (Exception ex) {
+          Utility.showTimeoutError();
+          throw new RuntimeException(ex);
+       }
+    
     }//GEN-LAST:event_checkBtnActionPerformed
 
     private void fieldIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldIpActionPerformed
@@ -300,7 +306,12 @@ public class MainInterface extends javax.swing.JFrame {
 
     private void refreshSwitchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshSwitchActionPerformed
         // TODO add your handling code here:
-        wrapper.refreshCurSwitch();
+        try {
+            wrapper.refreshCurSwitch();
+        } catch(Exception ex) {
+            Utility.showTimeoutError();
+            throw new RuntimeException(ex);
+        }
     }//GEN-LAST:event_refreshSwitchActionPerformed
 
     /**

@@ -28,8 +28,8 @@ public class Switch {
 
     
     
-    private String  ip ;
-    private String community;
+    private String  ip = null;
+    private String community = "bcomsnmpadmin";
     private int version = 1;
     private ArrayList<Vlan> vlans = new ArrayList();
     private ArrayList<Port> ports = new ArrayList();
@@ -117,20 +117,29 @@ public class Switch {
     
     
     private void initVlanToPortList() {
-        if (ports.isEmpty()) {
-            initPorts();
-        }
-        vlanToPortList.clear();
-        for (Port port : ports) {
-            vlanToPortList.addAll(port.getPortVlans());
-            //System.out.println(port.getPortNbr());
+        try {
+            if (ports.isEmpty()) {
+                initPorts();
+            }
+            vlanToPortList.clear();
+            for (Port port : ports) {
+                vlanToPortList.addAll(port.getPortVlans());
+                //System.out.println(port.getPortNbr());
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException();
         }
     }
     
     public ArrayList<PortVlan> getVlanToPortList() {
-        if (vlanToPortList.isEmpty()) {
-            initVlanToPortList();
-        }        
+        try {
+            if (vlanToPortList.isEmpty()) {
+                initVlanToPortList();
+            }        
+            return vlanToPortList;
+        } catch (Exception ex) {
+        }
+        vlanToPortList.clear();
         return vlanToPortList;
     }
     
@@ -175,17 +184,23 @@ public class Switch {
     }
     
     public ArrayList<Port> getPorts()  {
-        if (ports.isEmpty()) {
-            initPorts();
+        try {
+            if (ports.isEmpty()) {
+                initPorts();
+            }
+            return ports;
+        } catch (Exception ex) {
         }
+        ports.clear();
         return ports;
     }
     
     
     public void initVlans()  {
        
-        vlans.clear();
+        //vlans.clear();
         try {
+            vlans.clear();
             InetAddress hostAddress = InetAddress.getByName(ip);
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
@@ -207,24 +222,32 @@ public class Switch {
             comInterface.closeConnection();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
-            
         }
     }
     
     public ArrayList<Vlan> getVlans()  {
-        if (vlans.isEmpty()) {
-            initVlans();
+        try {
+            if (vlans.isEmpty()) {
+                initVlans();
+            }
+            return vlans;
+        } catch (Exception ex) {
         }
+        vlans.clear();
         return vlans;
     }
     
     public String getModel() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
+       try {
+            InetAddress hostAddress = InetAddress.getByName(ip);             
+            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+
+            SNMPVarBindList newVars = comInterface.getMIBEntry(OID_MODEL);
+            return Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
+       } catch (Exception ex) {
+       }
        
-       InetAddress hostAddress = InetAddress.getByName(ip);             
-       SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-       
-       SNMPVarBindList newVars = comInterface.getMIBEntry(OID_MODEL);
-       return Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
+       return "";
        
     }
     
@@ -236,6 +259,7 @@ public class Switch {
             
             SNMPVarBindList newVars;
             if (getModel().contains("DGS-3100-24TG") || getModel().contains("AT-8000S")) {
+                //System.out.println("lal");
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_3100TG);
             } else if(getModel().contains("DGS-1210")) {
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_DLINK1210);
@@ -243,10 +267,10 @@ public class Switch {
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP);
             }
             String gwip = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
-            
-            if ("".equals(gwip)) {
-                return "INCORRECT IP";
-            }
+            //System.out.println(gwip);
+//            if ("".equals(gwip)) {
+//                return "INCORRECT IP";
+//            }
             
             
             
@@ -262,14 +286,15 @@ public class Switch {
             else {
                 newVars = comInterface.getMIBEntry(OID_GWMAC_DLINK + gwip);
             }
-            //System.out.println(newVars.getSNMPObjectAt(0).toString());
+            
+            //System.out.println(Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0)));
             
             
             comInterface.closeConnection();
+            
             return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
         } catch (Exception ex) {
            Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
-           
         }
         return "";
        

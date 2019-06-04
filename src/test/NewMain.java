@@ -45,7 +45,8 @@ public class NewMain {
         int rep = 0;
         do {
             
-            Switch sw = new Switch("172.27.78.237", "bcomsnmpadmin");
+            Switch sw = new Switch("172.16.131.2", "bcomsnmpadmin");
+            System.out.println(sw.getGatewayMac());
             //Switch swdown = new Switch ("172.27.78.196", "bcomsnmpadmin");
             
             /*
@@ -61,9 +62,9 @@ public class NewMain {
             }
             */
             //sw.initVlanToPortList();
-            for (PortVlan p: sw.getVlanToPortList()) {
-                System.out.println(p.getPortNbr() + "  " + p.getVlanNbr());
-            }
+//            for (PortVlan p: sw.getVlanToPortList()) {
+//                System.out.println(p.getPortNbr() + "  " + p.getVlanNbr());
+//            }
             
             //System.out.println(Utility.checkPorts(swup.getPorts().get(UPPORT_NBR), swdown));
             

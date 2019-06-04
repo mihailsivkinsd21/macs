@@ -213,10 +213,15 @@ public class Vlan extends PropertySupport {
     
     
     public ArrayList<Mac> getMacs() {
-        if (macs.isEmpty()) {
-            initMacs();
+        try {
+            if (macs.isEmpty()) {
+                initMacs();
+            }
+
+            return macs;
+        } catch (Exception ex) {
         }
-                
+        macs.clear();
         return macs;
     }
     

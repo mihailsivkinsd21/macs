@@ -41,23 +41,24 @@ public class MainInterfaceWrapper extends PropertySupport {
     public void checkSwitch() {
         try {
             curSwitch = new Switch(ip, community);
-
-            switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
+            switches.add(curSwitch);
+            
             switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.72.110", "bcomsnmpadmin"));
-            //switches.add(new Switch("172.16.131.2", "bcomsnmpadmin"));
+            switches.add(new Switch("172.16.131.2", "bcomsnmpadmin"));
             switches.add(new Switch("172.20.3.77", "bcomsnmpadmin"));
             //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             firePropertyChange("curSwitch");
         } catch (Exception ex) {
-            Utility.showTimeoutError();
+//            switches.clear();
+//            curSwitch = null;
+//            firePropertyChange("curSwitch");
+//            firePropertyChange("switches");
+            
             throw new RuntimeException(ex);
-            //switches.clear();
-            //firePropertyChange("switches");
-            //firePropertyChange("curSwitch");
         }
     }    
     
@@ -97,8 +98,9 @@ public class MainInterfaceWrapper extends PropertySupport {
         //Switch refrSwitch = curSwitch;
         //System.out.println(refrSwitch.getIp());
         //refrSwitch.init();
-        curSwitch.init();
         setCurSwitch(null);
+        curSwitch.init();
+        //setCurSwitch(null);
         firePropertyChange("curSwitch");
     }
     
@@ -131,17 +133,14 @@ public class MainInterfaceWrapper extends PropertySupport {
     }
 
     public void setCurSwitch(Switch curSwitch) {
-        //System.out.println("1");
         try {
-//            if(curSwitch != null){
-//               System.out.println("2 " + curSwitch.getIp() + " " + curSwitch.equals(this.curSwitch));
-//            }
             this.curSwitch = curSwitch;
-            //System.out.println("1");
             firePropertyChange("curSwitch", null, new Object());
             //System.out.println("1");
         } catch (Exception ex) {
             //System.out.println("3");
+           // this.curSwitch = null;
+           // firePropertyChange("curSwitch");
             Utility.showTimeoutError();
             throw new RuntimeException(ex);
             //Utility.showTimeoutError();
