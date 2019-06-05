@@ -196,6 +196,51 @@ public class Switch {
         return ports;
     }
     
+    public Port getPortByNbr(int portNbr) {
+        ArrayList<Port> allPorts = new ArrayList<Port>();
+        allPorts.addAll(this.getPorts());
+        
+        for (Port p: allPorts) {
+            if (p.getPortNbr()==portNbr) {
+                return p;
+            }
+        }
+        return null;
+    }
+    
+    public boolean uplinkHasDownlinkVlans(int uplinkPortNbr) {
+        Port uplinkPort = getPortByNbr(uplinkPortNbr);
+        
+        ArrayList <Port> nonUplinkPorts = new ArrayList<Port>();
+        for (Port p : this.getPorts()) {
+            if (!p.equals(uplinkPort)) {
+                nonUplinkPorts.add(p);
+            }
+        }
+        
+        Set <Vlan> uplinkVlans = new HashSet<Vlan>();
+        uplinkVlans.addAll(uplinkPort.getNonMgmVlans());
+        
+        Set<Vlan> nonUplinkVlans = new HashSet<Vlan>();
+        for (Port p : nonUplinkPorts) {
+            nonUplinkVlans.addAll(p.getNonMgmVlans());
+        }
+        
+        Set<Vlan> checkVlans = new HashSet<Vlan>();
+        checkVlans.addAll(nonUplinkVlans);
+        
+        for (Vlan n: nonUplinkVlans) {
+            for (Vlan u: uplinkVlans) {
+                if (n.getVlanNbr().equals(u.getVlanNbr())) {
+                    checkVlans.remove(n);
+                }
+            }
+        }
+        
+        
+        return checkVlans.isEmpty();
+    }
+    
     
     public void initVlans()  {
        

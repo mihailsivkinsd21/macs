@@ -40,8 +40,10 @@ public class MainInterfaceWrapper extends PropertySupport {
     
     public void checkSwitch() {
         try {
+            //setCurSwitch(null);
             curSwitch = new Switch(ip, community);
-            switches.add(curSwitch);
+            switches.clear();
+            switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
             
             switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
@@ -58,7 +60,7 @@ public class MainInterfaceWrapper extends PropertySupport {
 //            switches.clear();
 //            curSwitch = null;
 //            firePropertyChange("curSwitch");
-//            firePropertyChange("switches");
+            firePropertyChange("switches");
             
             throw new RuntimeException(ex);
         }

@@ -98,9 +98,27 @@ public class Port {
     public ArrayList<Vlan> getVlans() {
         return vlans;
     }
+    
+    public ArrayList<Vlan> getNonMgmVlans() {
+        ArrayList<Vlan> nonMgmVlans = new ArrayList<Vlan>();
+        for (Vlan v: getVlans()) {
+            if (!"17".equals(v.getVlanNbr()) && !"19".equals(v.getVlanNbr())) {
+                nonMgmVlans.add(v);
+            }
+        }
+        return nonMgmVlans;
+    }
 
     public int getPortNbr() {
         return portNbr;
+    }
+    
+    public void setPortNbr(int portNbr) {
+        this.portNbr = portNbr;
+    }
+    
+    public void setPortName(String name) {
+        this.portName = name;
     }
 
     public String getPortName() {
@@ -110,6 +128,28 @@ public class Port {
     private int oidToPortNbr(String oid) {
         String[] parts = oid.split("\\.");
         return Integer.parseInt(parts[parts.length - 1]);
+    }
+    
+    public boolean hasSameVlans(Port otherPort) {
+        
+        ArrayList <Vlan> thisVlans = new ArrayList<Vlan>();
+        thisVlans.addAll(this.getNonMgmVlans());
+        System.out.println(this.getNonMgmVlans());
+        System.out.println(otherPort.getNonMgmVlans());
+        
+        for (Vlan t: this.getNonMgmVlans()) {
+            for (Vlan o: otherPort.getNonMgmVlans()) {
+                if (t.getVlanNbr().equals(o.getVlanNbr())) {
+                    thisVlans.remove(o);
+                }
+            }
+        }
+        
+        System.out.println(thisVlans);
+        
+        
+        return thisVlans.isEmpty();
+        
     }
     
     
