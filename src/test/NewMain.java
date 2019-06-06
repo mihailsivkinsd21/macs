@@ -49,24 +49,8 @@ public class NewMain {
               Switch swup = new Switch("172.27.78.237", "bcomsnmpadmin");
               Switch swdown = new Switch("172.27.78.196", "bcomsnmpadmin");
               
-              Port p = new Port();
-              p.setPortName("test");
-              p.setPortNbr(29);
-              p.getVlans().add(new Vlan("3842",""));
-              p.getVlans().add(new Vlan("2",""));
-              p.getVlans().add(new Vlan("22",""));
-              swup.getPorts().add(p);
-              
-              
-              System.out.println("Test port: ");  
-              System.out.println(swup.getPortByNbr(29).hasSameVlans(swdown.getPortByNbr(28)));
-              System.out.println(swup.uplinkHasDownlinkVlans(29));
-              
-              System.out.println();
-              System.out.println("Real port: ");
-              System.out.println(swup.getPortByNbr(27).hasSameVlans(swdown.getPortByNbr(28)));
-              System.out.println(swup.uplinkHasDownlinkVlans(28));
-              
+              SwitchConnection con = new SwitchConnection(swup,swdown,27,28);
+              System.out.println(con.getVlanErrors());
 
             
               

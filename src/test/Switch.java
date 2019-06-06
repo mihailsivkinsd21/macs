@@ -308,6 +308,14 @@ public class Switch {
         return "";
        
     }
+    
+    public void updateUplinkStatus(int uplinkNbr) {
+        for (Port p: ports) {
+            if (p.getPortNbr() == uplinkNbr) {
+                p.setIsUplink(true);
+            }
+        }
+    }
 
     @Override
     public int hashCode() {

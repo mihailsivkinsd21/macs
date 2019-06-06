@@ -27,6 +27,10 @@ public class MainInterfaceWrapper extends PropertySupport {
     private Vlan vlanOnPort = null;
     private PortVlan portToVlan = null;
     private Mac portMac = null;
+    private List<SwitchConnection> switchConnections = ObservableCollections.observableList(new ArrayList<SwitchConnection>());
+
+   
+    private SwitchConnection curSwitchConnection = null;
 
     private Switch curSwitch = null;
 
@@ -43,8 +47,14 @@ public class MainInterfaceWrapper extends PropertySupport {
             //setCurSwitch(null);
             curSwitch = new Switch(ip, community);
             switches.clear();
-            switches.add(new Switch("172.27.78.237", "bcomsnmpadmin"));
-
+            switchConnections.clear();
+            Switch sw1 = new Switch("172.27.78.237", "bcomsnmpadmin");
+            sw1.updateUplinkStatus(28);
+            switches.add(sw1);
+            
+            Switch sw2 = new Switch("172.27.78.196", "bcomsnmpadmin");
+            
+            
             switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             switches.add(new Switch("172.25.2.236", "bcomsnmpadmin"));
@@ -54,6 +64,8 @@ public class MainInterfaceWrapper extends PropertySupport {
             switches.add(new Switch("172.16.131.2", "bcomsnmpadmin"));
             switches.add(new Switch("172.20.3.77", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.64.118", "bcomsnmpadmin"));
+            
+            switchConnections.add(new SwitchConnection(sw1,sw2, 27,28));
 
             //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             firePropertyChange("curSwitch");
@@ -101,7 +113,7 @@ public class MainInterfaceWrapper extends PropertySupport {
     public void refreshCurSwitch() {
         
         setCurSwitch(null);
-        
+        curSwitch.init();
         firePropertyChange("curSwitch");
     }
 
@@ -135,7 +147,7 @@ public class MainInterfaceWrapper extends PropertySupport {
         try {
             this.curSwitch = curSwitch;
 
-            if (curSwitch != null) {
+            if (curSwitch != null && curSwitch.getPorts().isEmpty()) {
                 this.curSwitch.init();
             }
             firePropertyChange("curSwitch", null, new Object());
@@ -171,6 +183,22 @@ public class MainInterfaceWrapper extends PropertySupport {
 
     public void setVlanOnPort(Vlan vlanOnPort) {
         this.vlanOnPort = vlanOnPort;
+    }
+    
+     public List<SwitchConnection> getSwitchConnections() {
+        return switchConnections;
+    }
+
+    public void setSwitchConnections(List<SwitchConnection> switchConnections) {
+        this.switchConnections = switchConnections;
+    }
+
+    public SwitchConnection getCurSwitchConnection() {
+        return curSwitchConnection;
+    }
+
+    public void setCurSwitchConnection(SwitchConnection curSwitchConnection) {
+        this.curSwitchConnection = curSwitchConnection;
     }
 
 }

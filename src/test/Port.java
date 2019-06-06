@@ -33,8 +33,10 @@ public class Port {
 
     private String switchIp;
     private String community;
-    ArrayList<Vlan> vlans = new ArrayList();
-    ArrayList<PortVlan> portVlans = new ArrayList();
+    private ArrayList<Vlan> vlans = new ArrayList();
+    private ArrayList<PortVlan> portVlans = new ArrayList();
+    private ArrayList<String> vlansError = new ArrayList<String>();
+    private boolean isUplink;
     
     private static final int VLAN_STRING_SIZE = 5;
     
@@ -46,6 +48,7 @@ public class Port {
     public Port(String oid, String value) {
         portName = value;
         portNbr = oidToPortNbr(oid);
+        
     }
 
     public ArrayList<PortVlan> getPortVlans() {
@@ -57,6 +60,14 @@ public class Port {
         }
 
         return portVlans;
+    }
+    
+    public boolean getIsUplink() {
+        return isUplink;
+    }
+    
+    public void setIsUplink(boolean is) {
+        this.isUplink = is;
     }
 
     public String getVlansString() {
@@ -90,6 +101,10 @@ public class Port {
         vlans.add(newVlan);
 
     }
+    
+    public ArrayList<String> getVlansError() {
+        return vlansError;
+    }
 
     public int getVlanSize() {
         return vlans.size();
@@ -102,7 +117,7 @@ public class Port {
     public ArrayList<Vlan> getNonMgmVlans() {
         ArrayList<Vlan> nonMgmVlans = new ArrayList<Vlan>();
         for (Vlan v: getVlans()) {
-            if (!"17".equals(v.getVlanNbr()) && !"19".equals(v.getVlanNbr())) {
+            if (!"17".equals(v.getVlanNbr()) && !"19".equals(v.getVlanNbr()) && !"2".equals(v.getVlanNbr())) {
                 nonMgmVlans.add(v);
             }
         }
@@ -134,8 +149,24 @@ public class Port {
         
 //        System.out.println(this.getNonMgmVlanNbrs());
 //        System.out.println(otherPort.getNonMgmVlanNbrs());
-       
+        
         return this.getNonMgmVlanNbrs().containsAll(otherPort.getNonMgmVlanNbrs()) && otherPort.getNonMgmVlanNbrs().containsAll(this.getNonMgmVlanNbrs());
+        
+    }
+    
+    public void findVlanErrors(Port otherPort) {
+        
+        this.getVlansError().clear();
+        
+        ArrayList<String> checkList = new ArrayList<String>();
+        checkList.addAll(this.getNonMgmVlanNbrs());
+        checkList.removeAll(otherPort.getNonMgmVlanNbrs());
+        this.getVlansError().addAll(checkList);
+        
+        checkList.clear();
+        checkList.addAll(otherPort.getNonMgmVlanNbrs());
+        checkList.removeAll(this.getNonMgmVlanNbrs());
+        this.getVlansError().addAll(checkList);
         
     }
     
