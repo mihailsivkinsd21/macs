@@ -133,14 +133,7 @@ public class Switch {
     }
     
     public ArrayList<PortVlan> getVlanToPortList() {
-        try {
-            if (vlanToPortList.isEmpty()) {
-                initVlanToPortList();
-            }        
-            return vlanToPortList;
-        } catch (Exception ex) {
-        }
-        vlanToPortList.clear();
+        
         return vlanToPortList;
     }
     
@@ -185,14 +178,6 @@ public class Switch {
     }
     
     public ArrayList<Port> getPorts()  {
-        try {
-            if (ports.isEmpty()) {
-                initPorts();
-            }
-            return ports;
-        } catch (Exception ex) {
-        }
-        ports.clear();
         return ports;
     }
     
@@ -218,27 +203,15 @@ public class Switch {
             }
         }
         
-        Set <Vlan> uplinkVlans = new HashSet<Vlan>();
-        uplinkVlans.addAll(uplinkPort.getNonMgmVlans());
+        Set <String> uplinkVlanNbrs = new HashSet(uplinkPort.getNonMgmVlanNbrs());
+        Set <String> nonUplinkVlanNbrs = new HashSet <String>();
         
-        Set<Vlan> nonUplinkVlans = new HashSet<Vlan>();
         for (Port p : nonUplinkPorts) {
-            nonUplinkVlans.addAll(p.getNonMgmVlans());
-        }
-        
-        Set<Vlan> checkVlans = new HashSet<Vlan>();
-        checkVlans.addAll(nonUplinkVlans);
-        
-        for (Vlan n: nonUplinkVlans) {
-            for (Vlan u: uplinkVlans) {
-                if (n.getVlanNbr().equals(u.getVlanNbr())) {
-                    checkVlans.remove(n);
-                }
-            }
+            nonUplinkVlanNbrs.addAll(p.getNonMgmVlanNbrs());
         }
         
         
-        return checkVlans.isEmpty();
+        return uplinkVlanNbrs.containsAll(nonUplinkVlanNbrs) && nonUplinkVlanNbrs.containsAll(uplinkVlanNbrs);
     }
     
     
@@ -272,16 +245,10 @@ public class Switch {
     }
     
     public ArrayList<Vlan> getVlans()  {
-        try {
-            if (vlans.isEmpty()) {
-                initVlans();
-            }
-            return vlans;
-        } catch (Exception ex) {
-        }
-        vlans.clear();
+        
         return vlans;
     }
+    
     
     public String getModel() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
        try {

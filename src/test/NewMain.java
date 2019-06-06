@@ -53,47 +53,21 @@ public class NewMain {
               p.setPortName("test");
               p.setPortNbr(29);
               p.getVlans().add(new Vlan("3842",""));
+              p.getVlans().add(new Vlan("2",""));
+              p.getVlans().add(new Vlan("22",""));
               swup.getPorts().add(p);
               
-              //System.out.println(swdown.getPortByNbr(28).getVlans());
-             // System.out.println(swup.getPortByNbr(29).getVlans());
               
+              System.out.println("Test port: ");  
               System.out.println(swup.getPortByNbr(29).hasSameVlans(swdown.getPortByNbr(28)));
+              System.out.println(swup.uplinkHasDownlinkVlans(29));
               
+              System.out.println();
+              System.out.println("Real port: ");
+              System.out.println(swup.getPortByNbr(27).hasSameVlans(swdown.getPortByNbr(28)));
+              System.out.println(swup.uplinkHasDownlinkVlans(28));
               
-//            //Switch swup = new Switch("172.27.64.118", "bcomsnmpadmin");
-//            Switch swdown = new Switch ("172.27.78.196", "bcomsnmpadmin");
-//            
-//            //System.out.println(swup.getPortByNbr(28));
-//            
-//            System.out.println(swup.getPortByNbr(27).hasSameVlans(swdown.getPortByNbr(28)));
-//            System.out.println(swup.uplinkHasDownlinkVlans(28));
-//            
-//            
-//            
-//            swdown = new Switch ("172.27.78.198", "bcomsnmpadmin");
-//            System.out.println();
-//            System.out.println(swup.getPortByNbr(26).hasSameVlans(swdown.getPortByNbr(28)));
-//            
-//            
-//            swdown = new Switch ("172.27.78.197", "bcomsnmpadmin");
-//            System.out.println();
-//            System.out.println(swup.getPortByNbr(26).hasSameVlans(swdown.getPortByNbr(28)));
-//            
-//            swup = new Switch ("172.27.78.163", "bcomsnmpadmin");
-//            swdown = new Switch ("172.27.78.237", "bcomsnmpadmin");
-//            
-//            System.out.println();
-//            System.out.println(swup.getPortByNbr(1).hasSameVlans(swdown.getPortByNbr(28)));
-//            
-//            
-//            swup = new Switch("172.27.78.237", "bcomsnmpadmin");
-//            swdown = new Switch("172.27.64.118", "bcomsnmpadmin");
-//            System.out.println();
-//            System.out.println(swup.getPortByNbr(28).hasSameVlans(swdown.getPortByNbr(10)));
-            //System.out.println(swup.getPortByNbr(UPPORT_NBR).getNonMgmVlans());
-            
-            //System.out.println();
+
             
               
             

@@ -132,24 +132,20 @@ public class Port {
     
     public boolean hasSameVlans(Port otherPort) {
         
-        ArrayList <Vlan> thisVlans = new ArrayList<Vlan>();
-        thisVlans.addAll(this.getNonMgmVlans());
-        System.out.println(this.getNonMgmVlans());
-        System.out.println(otherPort.getNonMgmVlans());
+//        System.out.println(this.getNonMgmVlanNbrs());
+//        System.out.println(otherPort.getNonMgmVlanNbrs());
+       
+        return this.getNonMgmVlanNbrs().containsAll(otherPort.getNonMgmVlanNbrs()) && otherPort.getNonMgmVlanNbrs().containsAll(this.getNonMgmVlanNbrs());
         
-        for (Vlan t: this.getNonMgmVlans()) {
-            for (Vlan o: otherPort.getNonMgmVlans()) {
-                if (t.getVlanNbr().equals(o.getVlanNbr())) {
-                    thisVlans.remove(o);
-                }
-            }
+    }
+    
+    public ArrayList<String> getNonMgmVlanNbrs() {
+        ArrayList <Vlan> nonMgmVlans = this.getNonMgmVlans();
+        ArrayList <String> vlanNbrs = new ArrayList<String>();
+        for (Vlan v: nonMgmVlans) {
+            vlanNbrs.add(v.getVlanNbr());
         }
-        
-        System.out.println(thisVlans);
-        
-        
-        return thisVlans.isEmpty();
-        
+        return vlanNbrs;
     }
     
     

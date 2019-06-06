@@ -44,6 +44,10 @@ public class Vlan extends PropertySupport {
         
     }
     
+    public Vlan(String vlan){
+        this.vlanNbr = vlan;
+    }
+    
     public Vlan(String vlan, String swip){
         this.vlanNbr = vlan;
         this.switchIp = swip;
