@@ -27,6 +27,7 @@ public class MainInterfaceWrapper extends PropertySupport {
     private Vlan vlanOnPort = null;
     private PortVlan portToVlan = null;
     private Mac portMac = null;
+    private Port portUplinkTable = null;
     private List<SwitchConnection> switchConnections = ObservableCollections.observableList(new ArrayList<SwitchConnection>());
 
    
@@ -48,24 +49,39 @@ public class MainInterfaceWrapper extends PropertySupport {
             curSwitch = new Switch(ip, community);
             switches.clear();
             switchConnections.clear();
-            Switch sw1 = new Switch("172.27.78.237", "bcomsnmpadmin");
-            sw1.updateUplinkStatus(28);
+            Switch sw1 = new Switch("172.27.78.237", "bcomsnmpadmin", 28);
+            //sw1.initVlans();
+            //curSwitch.initMacsOnVlans();
+            
+            
+            
             switches.add(sw1);
             
-            Switch sw2 = new Switch("172.27.78.196", "bcomsnmpadmin");
+            Switch sw2 = new Switch("172.27.78.196", "bcomsnmpadmin", 28);
+            //sw2.updateUplinkStatus(28);
+            switches.add(sw2);
+            //sw2.updateUplinkStatus();
+            Switch sw3 = new Switch("172.27.78.198", "bcomsnmpadmin", 28);
+            //sw3.updateUplinkStatus(28);
+            switches.add(sw3);
+            
+            Switch sw4 = new Switch("172.27.78.163", "bcomsnmpadmin", 28);
+            //sw4.updateUplinkStatus(28);
+            switches.add(sw4);
             
             
-            switches.add(new Switch("172.27.78.163", "bcomsnmpadmin"));
-            switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             switches.add(new Switch("172.25.2.236", "bcomsnmpadmin"));
             //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
-            switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
+            //switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.72.110", "bcomsnmpadmin"));
             switches.add(new Switch("172.16.131.2", "bcomsnmpadmin"));
             switches.add(new Switch("172.20.3.77", "bcomsnmpadmin"));
             switches.add(new Switch("172.27.64.118", "bcomsnmpadmin"));
             
             switchConnections.add(new SwitchConnection(sw1,sw2, 27,28));
+            switchConnections.add(new SwitchConnection(sw1,sw3,26,28));
+            switchConnections.add(new SwitchConnection(sw4,sw1, 1, 28));
+            
 
             //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             firePropertyChange("curSwitch");
@@ -113,7 +129,7 @@ public class MainInterfaceWrapper extends PropertySupport {
     public void refreshCurSwitch() {
         
         setCurSwitch(null);
-        curSwitch.init();
+        this.curSwitch.initAll();
         firePropertyChange("curSwitch");
     }
 
@@ -146,9 +162,11 @@ public class MainInterfaceWrapper extends PropertySupport {
     public void setCurSwitch(Switch curSwitch) {
         try {
             this.curSwitch = curSwitch;
-
-            if (curSwitch != null && curSwitch.getPorts().isEmpty()) {
-                this.curSwitch.init();
+            if (curSwitch != null) {
+                if (!curSwitch.isInited()) {
+                    this.curSwitch.initAll();
+                    //System.out.println("a");
+                }
             }
             firePropertyChange("curSwitch", null, new Object());
 
@@ -199,6 +217,15 @@ public class MainInterfaceWrapper extends PropertySupport {
 
     public void setCurSwitchConnection(SwitchConnection curSwitchConnection) {
         this.curSwitchConnection = curSwitchConnection;
+    }
+
+    public Port getPortUplinkTable() {
+        return portUplinkTable;
+    }
+
+    public void setPortUplinkTable(Port portUplinkTable) {
+        this.portUplinkTable = portUplinkTable;
+        firePropertyChange("portUplinkTable");
     }
 
 }

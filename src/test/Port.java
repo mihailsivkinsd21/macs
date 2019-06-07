@@ -37,6 +37,7 @@ public class Port {
     private ArrayList<PortVlan> portVlans = new ArrayList();
     private ArrayList<String> vlansError = new ArrayList<String>();
     private boolean isUplink;
+    private ArrayList <String> problemVlans = new ArrayList<String>();
     
     private static final int VLAN_STRING_SIZE = 5;
     
@@ -220,6 +221,10 @@ public class Port {
             return false;
         }
         return true;
+    }
+    
+    public ArrayList<String> getProblemVlans() {
+        return problemVlans;
     }
    
 

@@ -35,7 +35,8 @@ public class Switch {
     private ArrayList<Port> ports = new ArrayList();
     private ArrayList<PortVlan> vlanToPortList = new ArrayList();
     private String status = "";
-    
+    private int uplinkNbr = -1;
+    //private ArrayList<String> problemVlans = new ArrayList<String>();
     
     
     private final String OID_PORTS = "1.3.6.1.2.1.31.1.1.1.1";
@@ -61,21 +62,42 @@ public class Switch {
         
     }
     
-    public void init() {
+    public void initVlansAndPorts() {
         //vlans.clear();
         //ports.clear();
         //vlanToPortList.clear();
         //initVlans();
         //initPorts();
-        vlans.clear();
-        ports.clear();
-        vlanToPortList.clear();
+        initVlans();
+        initPorts();
+    }
+    
+    public void initAll() {
+        initVlans();
+        initMacsOnVlans();
+        initPorts();
         initVlanToPortList();
+        updateUplinkStatus();
+        initPortProblems();
     }
     
     public Switch(String newhostadress, String newcommunity) {
         setIp(newhostadress);
         setCommunity(newcommunity);        
+    }
+    
+    public Switch(String newhostadress, String newcommunity, int uplinkNbr) {
+        setIp(newhostadress);
+        setCommunity(newcommunity);
+        this.uplinkNbr = uplinkNbr;
+    }
+    
+    public void setUplinkNbr(int uplinkNbr) {
+        this.uplinkNbr = uplinkNbr;
+    }
+    
+    public int getUplinkNbr() {
+        return uplinkNbr;
     }
     
     public void setIp(String newIp) {
@@ -93,6 +115,8 @@ public class Switch {
     public void setCommunity(String newCommunity) {
         community = newCommunity;
     }
+    
+    
     
     public String getStatus() {
         boolean statusCheck = true;
@@ -117,7 +141,7 @@ public class Switch {
     
     
     
-    private void initVlanToPortList() {
+    public void initVlanToPortList() {
         try {
             if (ports.isEmpty()) {
                 initPorts();
@@ -137,7 +161,7 @@ public class Switch {
         return vlanToPortList;
     }
     
-    private void initPorts()  {
+    public void initPorts()  {
        
         try {
             ports.clear();
@@ -193,26 +217,64 @@ public class Switch {
         return null;
     }
     
-    public boolean uplinkHasDownlinkVlans(int uplinkPortNbr) {
-        Port uplinkPort = getPortByNbr(uplinkPortNbr);
-        
-        ArrayList <Port> nonUplinkPorts = new ArrayList<Port>();
-        for (Port p : this.getPorts()) {
-            if (!p.equals(uplinkPort)) {
-                nonUplinkPorts.add(p);
+    public boolean getUplinkHasDownlinkVlans() {
+        if (uplinkNbr!=-1) {
+            Port uplinkPort = getPortByNbr(uplinkNbr);
+
+            ArrayList <Port> nonUplinkPorts = new ArrayList<Port>();
+            for (Port p : this.getPorts()) {
+                if (!p.equals(uplinkPort)) {
+                    nonUplinkPorts.add(p);
+                }
+            }
+
+            Set <String> uplinkVlanNbrs = new HashSet(uplinkPort.getNonMgmVlanNbrs());
+            Set <String> nonUplinkVlanNbrs = new HashSet <String>();
+
+            for (Port p : nonUplinkPorts) {
+                nonUplinkVlanNbrs.addAll(p.getNonMgmVlanNbrs());
+            }
+
+    //        if (!uplinkVlanNbrs.containsAll(nonUplinkVlanNbrs) && nonUplinkVlanNbrs.containsAll(uplinkVlanNbrs)) {
+    //            
+    //            this.initPortProblems(uplinkNbr);
+    //            
+    //        }
+
+
+
+            return uplinkVlanNbrs.containsAll(nonUplinkVlanNbrs) && nonUplinkVlanNbrs.containsAll(uplinkVlanNbrs);
+        } else {
+            return true;
+        }
+    }
+    
+    public void initPortProblems() {
+        if (uplinkNbr!=-1) {
+            this.updateUplinkStatus();
+            ArrayList<String> uplinkVlanNbrs = this.getPortByNbr(uplinkNbr).getNonMgmVlanNbrs();
+            Set<String> uplinkBadVlans = new HashSet<String>();
+            for (Port p : this.getPorts()) {
+                if (!p.getIsUplink()) {
+                    p.getProblemVlans().clear();
+                    p.getProblemVlans().addAll(p.getNonMgmVlanNbrs());
+                    p.getProblemVlans().removeAll(uplinkVlanNbrs);
+                    uplinkBadVlans.addAll(p.getProblemVlans());
+                    //System.out.println(p.getProblemVlans());
+                }
+            }
+            for (Port p : this.getPorts()) {
+                //System.out.println("3");
+                if (p.getIsUplink()) {
+                    //System.out.println("3");
+                    p.getProblemVlans().clear();
+                    p.getProblemVlans().addAll(uplinkBadVlans);
+                }
             }
         }
-        
-        Set <String> uplinkVlanNbrs = new HashSet(uplinkPort.getNonMgmVlanNbrs());
-        Set <String> nonUplinkVlanNbrs = new HashSet <String>();
-        
-        for (Port p : nonUplinkPorts) {
-            nonUplinkVlanNbrs.addAll(p.getNonMgmVlanNbrs());
-        }
-        
-        
-        return uplinkVlanNbrs.containsAll(nonUplinkVlanNbrs) && nonUplinkVlanNbrs.containsAll(uplinkVlanNbrs);
     }
+    
+   
     
     
     public void initVlans()  {
@@ -309,12 +371,42 @@ public class Switch {
        
     }
     
-    public void updateUplinkStatus(int uplinkNbr) {
+    public void updateUplinkStatus() {
+//        if (ports.isEmpty()) {
+//            initPorts();
+//        }
         for (Port p: ports) {
             if (p.getPortNbr() == uplinkNbr) {
                 p.setIsUplink(true);
             }
         }
+    }
+    
+    public boolean isInited() {
+        boolean check = false;
+        for (Vlan v: this.getVlans()) {
+            if (v.getMacs().size()>0) {
+                check = true;
+                break;
+            }
+        }
+        
+        if (ports.isEmpty()) {
+            check = false;
+            return check;
+        }
+        
+        if (vlans.isEmpty()) {
+            check = false;
+            return check;
+        }
+        
+        if (vlanToPortList.isEmpty()) {
+            check = false;
+            return check;
+        }
+        
+        return check;
     }
 
     @Override
@@ -357,6 +449,12 @@ public class Switch {
         
         
         return true;
+    }
+    
+    public void initMacsOnVlans() {
+        for (Vlan v: this.getVlans()) {
+            v.initMacs();
+        }
     }
     
     

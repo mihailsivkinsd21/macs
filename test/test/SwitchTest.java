@@ -38,7 +38,8 @@ public class SwitchTest {
         createPort(swup, 29, "3842");
         createPort(swup, 1);
         createPort(swup, 2);
-        assertFalse(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertFalse(swup.getUplinkHasDownlinkVlans());
     }
     
     @Test
@@ -47,7 +48,8 @@ public class SwitchTest {
         createPort(swup, 29, "3842");
         createPort(swup, 1, "3842");
         createPort(swup, 2, "3842");
-        assertTrue(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertTrue(swup.getUplinkHasDownlinkVlans());
     }
     
     @Test
@@ -56,7 +58,8 @@ public class SwitchTest {
         createPort(swup, 29);
         createPort(swup, 1, "3842");
         createPort(swup, 2, "3842","2");
-        assertFalse(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertFalse(swup.getUplinkHasDownlinkVlans());
     }
     
     @Test
@@ -65,7 +68,13 @@ public class SwitchTest {
         createPort(swup, 29, "3842");
         createPort(swup, 1, "3842","2");
         createPort(swup, 2, "3842","22","2");
-        assertFalse(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertFalse(swup.getUplinkHasDownlinkVlans());
+        swup.initPortProblems();
+        for (Port p: swup.getPorts()) {
+            System.out.println(p.getPortNbr() + " " + p.getProblemVlans());
+        }
+        
     }
     
     @Test
@@ -74,7 +83,8 @@ public class SwitchTest {
         createPort(swup, 29, "3842","2","22");
         createPort(swup, 1, "3842");
         createPort(swup, 2, "3842");
-        assertFalse(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertFalse(swup.getUplinkHasDownlinkVlans());
     }
     
     @Test
@@ -83,7 +93,8 @@ public class SwitchTest {
         createPort(swup, 29);
         createPort(swup, 1);
         createPort(swup, 2);
-        assertTrue(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertTrue(swup.getUplinkHasDownlinkVlans());
     }
     
     @Test
@@ -92,7 +103,8 @@ public class SwitchTest {
         createPort(swup, 29, "3842","17","2");
         createPort(swup, 1,"3842");
         createPort(swup, 2,"3842","2");
-        assertTrue(swup.uplinkHasDownlinkVlans(29));
+        swup.setUplinkNbr(29);
+        assertTrue(swup.getUplinkHasDownlinkVlans());
     }
 
     

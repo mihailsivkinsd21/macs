@@ -19,8 +19,8 @@ public class SwitchConnection {
     private ArrayList<String> vlanErrors = new ArrayList<String>();
     
     public SwitchConnection(Switch switchUp, Switch switchDown, int upportNbr, int downportNbr) {
-        switchUp.init();
-        switchDown.init();
+        switchUp.initVlansAndPorts();
+        switchDown.initVlansAndPorts();
         this.upportNbr = upportNbr;
         this.downportNbr = downportNbr;
         this.switchUp = switchUp;

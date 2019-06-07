@@ -66,7 +66,7 @@ public class Vlan extends PropertySupport {
         community = newcommunity;
         version = newversion;
         gatewayMac = newGwMac;
-        initMacs();
+        //initMacs();
     }
     
     public static Vlan create(String string) {
@@ -165,7 +165,7 @@ public class Vlan extends PropertySupport {
     
     
     
-    private void initMacs() {
+    public void initMacs() {
 
         try {
             macs.clear();
@@ -217,15 +217,15 @@ public class Vlan extends PropertySupport {
     
     
     public ArrayList<Mac> getMacs() {
-        try {
-            if (macs.isEmpty()) {
-                initMacs();
-            }
-
-            return macs;
-        } catch (Exception ex) {
-        }
-        macs.clear();
+//        try {
+//            if (macs.isEmpty()) {
+//                initMacs();
+//            }
+//
+//            return macs;
+//        } catch (Exception ex) {
+//        }
+//        macs.clear();
         return macs;
     }
     
