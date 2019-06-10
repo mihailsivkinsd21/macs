@@ -27,8 +27,11 @@ public class MainInterfaceWrapper extends PropertySupport {
     private Vlan vlanOnPort = null;
     private PortVlan portToVlan = null;
     private Mac portMac = null;
-    private Port portUplinkTable = null;
+    private Port badPort = null;
+    
+    
     private List<SwitchConnection> switchConnections = ObservableCollections.observableList(new ArrayList<SwitchConnection>());
+    private List<Port> badPorts = ObservableCollections.observableList(new ArrayList<Port>());
 
    
     private SwitchConnection curSwitchConnection = null;
@@ -65,13 +68,38 @@ public class MainInterfaceWrapper extends PropertySupport {
             //sw3.updateUplinkStatus(28);
             switches.add(sw3);
             
-            Switch sw4 = new Switch("172.27.78.163", "bcomsnmpadmin", 28);
-            //sw4.updateUplinkStatus(28);
+            Switch sw4 = new Switch("172.27.78.163", "bcomsnmpadmin");
+//            //sw4.updateUplinkStatus(28);
             switches.add(sw4);
             
-            Switch sw5 = new Switch("172.27.78.198", "bcomsnmpadmin", 28);
+            Switch sw5 = new Switch("172.27.78.197", "bcomsnmpadmin", 28);
             switches.add(sw5);
             
+            
+            badPorts.clear();
+            for (Switch sw: switches) {
+                sw.initVlansAndPorts();
+                sw.updateUplinkStatus();
+                
+//                if (sw.getIp().equals("172.27.78.197")) {   //BAD PORT TEST
+//                    Port fakePort = new Port();
+//                    fakePort.setPortName("Fake port");
+//                    fakePort.setPortNbr(333);
+//                    fakePort.getVlans().add(new Vlan("3842"));
+//                    fakePort.getVlans().add(new Vlan("22"));
+//                    fakePort.getVlans().add(new Vlan("33"));
+//                    sw.getPorts().add(fakePort);
+//                   
+//                }
+                
+                
+                sw.initPortProblems();
+                for (Port p: sw.getBadPorts()) {
+                    p.setSwitchIp(sw.getIp());
+                }
+                badPorts.addAll(sw.getBadPorts());
+                
+            }
             
            // switches.add(new Switch("172.25.2.236", "bcomsnmpadmin"));
             //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
@@ -223,13 +251,22 @@ public class MainInterfaceWrapper extends PropertySupport {
         this.curSwitchConnection = curSwitchConnection;
     }
 
-    public Port getPortUplinkTable() {
-        return portUplinkTable;
+    public Port getBadPort() {
+        return badPort;
     }
 
-    public void setPortUplinkTable(Port portUplinkTable) {
-        this.portUplinkTable = portUplinkTable;
-        firePropertyChange("portUplinkTable");
+    public void setBadPort(Port badPort) {
+        this.badPort = badPort;
     }
+
+    public List<Port> getBadPorts() {
+        return badPorts;
+    }
+
+    public void setBadPorts(List<Port> badPorts) {
+        this.badPorts = badPorts;
+    }
+
+
 
 }

@@ -180,6 +180,14 @@ public class Port {
         return vlanNbrs;
     }
     
+    public void setSwitchIp(String switchIp) {
+        this.switchIp = switchIp;
+    }
+    
+    public String getSwitchIp() {
+        return switchIp;
+    }
+    
     
     @Override
     public int hashCode() {

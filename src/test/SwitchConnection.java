@@ -19,8 +19,12 @@ public class SwitchConnection {
     private ArrayList<String> vlanErrors = new ArrayList<String>();
     
     public SwitchConnection(Switch switchUp, Switch switchDown, int upportNbr, int downportNbr) {
-        switchUp.initVlansAndPorts();
-        switchDown.initVlansAndPorts();
+        if (switchUp.getPorts().isEmpty() || switchUp.getVlans().isEmpty()) {
+            switchUp.initVlansAndPorts();
+        }
+        if (switchDown.getPorts().isEmpty() || switchDown.getVlans().isEmpty()) {
+            switchDown.initVlansAndPorts();
+        }
         this.upportNbr = upportNbr;
         this.downportNbr = downportNbr;
         this.switchUp = switchUp;
@@ -84,6 +88,7 @@ public class SwitchConnection {
     public Port getDownPort() {
         return switchDown.getPortByNbr(downportNbr);
     }
+  
     
    
     

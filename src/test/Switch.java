@@ -227,8 +227,10 @@ public class Switch {
                     nonUplinkPorts.add(p);
                 }
             }
-
+            
+            //System.out.println(uplinkPort.getNonMgmVlanNbrs());
             Set <String> uplinkVlanNbrs = new HashSet(uplinkPort.getNonMgmVlanNbrs());
+            //System.out.println(uplinkPort.getNonMgmVlanNbrs());
             Set <String> nonUplinkVlanNbrs = new HashSet <String>();
 
             for (Port p : nonUplinkPorts) {
@@ -272,6 +274,16 @@ public class Switch {
                 }
             }
         }
+    }
+    
+    public ArrayList<Port> getBadPorts() {
+        ArrayList<Port> badPorts = new ArrayList<Port>();
+        for (Port p: this.getPorts()) {
+            if (!p.getProblemVlans().isEmpty()) {
+                badPorts.add(p);
+            }
+        }
+        return badPorts;
     }
     
    

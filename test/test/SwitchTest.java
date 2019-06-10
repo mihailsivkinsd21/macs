@@ -5,6 +5,7 @@
  */
 package test;
 
+import java.util.ArrayList;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -71,8 +72,10 @@ public class SwitchTest {
         swup.setUplinkNbr(29);
         assertFalse(swup.getUplinkHasDownlinkVlans());
         swup.initPortProblems();
-        for (Port p: swup.getPorts()) {
-            System.out.println(p.getPortNbr() + " " + p.getProblemVlans());
+        ArrayList<Port> problems = new ArrayList<Port>();
+        problems.addAll(swup.getBadPorts());
+        for (Port p: problems) {
+            System.out.println(p.getPortNbr() + " "+ p.getProblemVlans());
         }
         
     }
