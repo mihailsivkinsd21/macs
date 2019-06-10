@@ -26,6 +26,8 @@ import java.math.*;
 import java.net.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import java.net.*;
+import java.io.*;
 
 /**
  *
@@ -92,6 +94,47 @@ public class Utility {
         }
         return list;
     }
+   
+   public static ArrayList<Switch> getSwitchesFromIp(String ip) {
+        try {
+            final int UPSWITCH_IP_POSITION = 0;
+            final int CURSWITCH_IP_POSITION = 1;
+            String link = "http://192.168.146.228:8080/irida_web/switches/check/?ip=" + ip;
+            URL url = new URL(link);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            
+            String line;
+            ArrayList<String> lines = new ArrayList<String>();
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            
+            ArrayList<Switch> allSwitches = new ArrayList<Switch>();
+            Integer nextUplink = 0;
+            for (String s: lines) {
+                
+                String[] splitString = s.split(",");
+                String sIp = splitString[0];
+                
+                if (s.equals(lines.get(UPSWITCH_IP_POSITION))) {     
+                    allSwitches.add(new Switch(sIp, "bcomsnmpadmin"));
+                    nextUplink = Integer.parseInt(splitString[2]);
+                } else if (s.equals(lines.get(CURSWITCH_IP_POSITION))) {
+                    allSwitches.add(new Switch(sIp, "bcomsnmpadmin", nextUplink));
+                } else {
+                    Integer uplink = Integer.parseInt(splitString[1]);
+                    allSwitches.add(new Switch(sIp, "bcomsnmpadmin", uplink));
+                }
+                
+            }
+            
+            return allSwitches;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        
+   }
+   
    
    
 

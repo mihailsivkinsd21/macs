@@ -46,14 +46,16 @@ public class NewMain {
         do {
             
 
-              Switch swup = new Switch("172.27.78.237", "bcomsnmpadmin");
-              Switch swdown = new Switch("172.27.78.196", "bcomsnmpadmin");
-              
-              SwitchConnection con = new SwitchConnection(swup,swdown,27,28);
-              System.out.println(con.getVlanErrors());
+//              Switch swup = new Switch("172.27.78.237", "bcomsnmpadmin");
+//              Switch swdown = new Switch("172.27.78.196", "bcomsnmpadmin");
+//              
+//              SwitchConnection con = new SwitchConnection(swup,swdown,27,28);
+//              System.out.println(con.getVlanErrors());
 
-            
-              
+            ArrayList<Switch> all= Utility.getSwitchesFromIp("172.27.1.107");
+            for (Switch sw: all) {
+                System.out.println(sw.getIp() + " " + sw.getUplinkNbr());
+            }
             
         
         } while (rep!=0);

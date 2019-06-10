@@ -4,7 +4,13 @@
  * and open the template in the editor.
  */
 package test;
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import snmp.SNMPBadValueException;
+import snmp.SNMPGetException;
 
 /**
  *
@@ -14,26 +20,46 @@ public class SwitchConnection {
     
     private Switch switchUp = null;
     private Switch switchDown = null;
-    private int upportNbr;
-    private int downportNbr;
+    private int upportNbr = 0;
+    private int downportNbr = 0;
     private ArrayList<String> vlanErrors = new ArrayList<String>();
     
     public SwitchConnection(Switch switchUp, Switch switchDown, int upportNbr, int downportNbr) {
-        if (switchUp.getPorts().isEmpty() || switchUp.getVlans().isEmpty()) {
-            switchUp.initVlansAndPorts();
-        }
-        if (switchDown.getPorts().isEmpty() || switchDown.getVlans().isEmpty()) {
-            switchDown.initVlansAndPorts();
-        }
-        this.upportNbr = upportNbr;
-        this.downportNbr = downportNbr;
-        this.switchUp = switchUp;
-        this.switchDown = switchDown;
-        if (!switchUp.getPortByNbr(upportNbr).hasSameVlans(switchDown.getPortByNbr(downportNbr))) {
-            switchUp.getPortByNbr(upportNbr).findVlanErrors(switchDown.getPortByNbr(downportNbr));
-            vlanErrors.addAll(switchUp.getPortByNbr(upportNbr).getVlansError());
-        } else {
-            vlanErrors.add("VLANS OK");
+        try {
+            this.upportNbr = upportNbr;
+            this.downportNbr = downportNbr;
+            this.switchUp = switchUp;
+            this.switchDown = switchDown;
+            if (switchUp.getModel().equals("TIMEOUT") || switchDown.getModel().equals("TIMEOUT")) {
+                vlanErrors.add("SWITCH TIMEOUT");
+            } else {
+                if (switchUp.getPorts().isEmpty() || switchUp.getVlans().isEmpty()) {
+                    switchUp.initVlansAndPorts();
+                }
+                if (switchDown.getPorts().isEmpty() || switchDown.getVlans().isEmpty()) {
+                    switchDown.initVlansAndPorts();
+                }
+            
+            
+
+           
+                if (!switchUp.getPortByNbr(upportNbr).hasSameVlans(switchDown.getPortByNbr(downportNbr))) {
+                    switchUp.getPortByNbr(upportNbr).findVlanErrors(switchDown.getPortByNbr(downportNbr));
+                    vlanErrors.addAll(switchUp.getPortByNbr(upportNbr).getVlansError());
+                } else {
+                    vlanErrors.add("VLANS OK");
+                }
+            } 
+                
+            
+        } catch (SocketException ex) {
+            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SNMPBadValueException ex) {
+            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SNMPGetException ex) {
+            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -124,14 +124,17 @@ public class MainInterface extends javax.swing.JFrame {
         scrollpaneSwitches = new javax.swing.JScrollPane();
         tableSwitches = new javax.swing.JTable();
         panelSelectedSwitch = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         scrollpaneVlans = new javax.swing.JScrollPane();
         tableVlans = new javax.swing.JTable();
         scrollpaneMacs = new javax.swing.JScrollPane();
         tableMacs = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
         scrollpanePorts = new javax.swing.JScrollPane();
         tablePorts = new javax.swing.JTable();
         scrollpanePortVlans = new javax.swing.JScrollPane();
         tablePortVlans = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
         scrollpanePortToVlan = new javax.swing.JScrollPane();
         tablePortToVlan = new javax.swing.JTable();
         scrollpaneMacsPort = new javax.swing.JScrollPane();
@@ -188,7 +191,7 @@ public class MainInterface extends javax.swing.JFrame {
         panelInputLayout.setVerticalGroup(
             panelInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelInputLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(panelInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fieldIp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelIp)
@@ -235,10 +238,10 @@ public class MainInterface extends javax.swing.JFrame {
         panelVlanErrorsLayout.setVerticalGroup(
             panelVlanErrorsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelVlanErrorsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollpaneSwitchConnections, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                .addGap(3, 3, 3)
+                .addComponent(scrollpaneSwitchConnections, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollpaneUplinkDownlink, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
+                .addComponent(scrollpaneUplinkDownlink, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
         );
 
         panelAllSwitches.setBorder(javax.swing.BorderFactory.createTitledBorder("All switches"));
@@ -265,12 +268,14 @@ public class MainInterface extends javax.swing.JFrame {
         panelAllSwitchesLayout.setVerticalGroup(
             panelAllSwitchesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAllSwitchesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollpaneSwitches, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(3, 3, 3)
+                .addComponent(scrollpaneSwitches, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                .addGap(3, 3, 3))
         );
 
         panelSelectedSwitch.setBorder(javax.swing.BorderFactory.createTitledBorder("Current switch"));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Vlans"));
 
         tableVlans.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -292,6 +297,29 @@ public class MainInterface extends javax.swing.JFrame {
         ));
         scrollpaneMacs.setViewportView(tableMacs);
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollpaneVlans)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollpaneMacs, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(1, 1, 1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollpaneMacs, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                    .addComponent(scrollpaneVlans, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(3, 3, 3))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Ports"));
+
         tablePorts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -311,6 +339,29 @@ public class MainInterface extends javax.swing.JFrame {
             }
         ));
         scrollpanePortVlans.setViewportView(tablePortVlans);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollpanePorts)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollpanePortVlans, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(1, 1, 1)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollpanePorts, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                    .addComponent(scrollpanePortVlans, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(2, 2, 2))
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Ports and Vlans"));
 
         tablePortToVlan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -332,6 +383,27 @@ public class MainInterface extends javax.swing.JFrame {
         ));
         scrollpaneMacsPort.setViewportView(tableMacsPort);
 
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollpanePortToVlan)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollpaneMacsPort, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(3, 3, 3)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollpanePortToVlan, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                    .addComponent(scrollpaneMacsPort, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(3, 3, 3))
+        );
+
         javax.swing.GroupLayout panelSelectedSwitchLayout = new javax.swing.GroupLayout(panelSelectedSwitch);
         panelSelectedSwitch.setLayout(panelSelectedSwitchLayout);
         panelSelectedSwitchLayout.setHorizontalGroup(
@@ -339,31 +411,20 @@ public class MainInterface extends javax.swing.JFrame {
             .addGroup(panelSelectedSwitchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelSelectedSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollpanePorts)
-                    .addComponent(scrollpaneVlans)
-                    .addComponent(scrollpanePortToVlan))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelSelectedSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollpanePortVlans, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(scrollpaneMacsPort, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(scrollpaneMacs, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(18, 18, 18))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         panelSelectedSwitchLayout.setVerticalGroup(
             panelSelectedSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelSelectedSwitchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelSelectedSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollpaneMacs, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                    .addComponent(scrollpaneVlans, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(3, 3, 3)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelSelectedSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollpanePorts, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
-                    .addComponent(scrollpanePortVlans, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelSelectedSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollpanePortToVlan, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                    .addComponent(scrollpaneMacsPort, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -388,7 +449,7 @@ public class MainInterface extends javax.swing.JFrame {
                 .addComponent(panelVlanErrors, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelAllSwitches, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(5, 5, 5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelSelectedSwitch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -401,6 +462,7 @@ public class MainInterface extends javax.swing.JFrame {
           wrapper.checkSwitch();
           refreshSwitch.setEnabled(true);
        } catch (Exception ex) {
+          refreshSwitch.setEnabled(true);
           Utility.showTimeoutError();
           throw new RuntimeException(ex);
        }
@@ -465,6 +527,9 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JToggleButton checkBtn;
     private javax.swing.JTextField fieldCommunity;
     private javax.swing.JTextField fieldIp;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel labelCommunity;
     private javax.swing.JLabel labelIp;
     private javax.swing.JPanel panelAllSwitches;

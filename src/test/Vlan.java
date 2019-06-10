@@ -139,6 +139,7 @@ public class Vlan extends PropertySupport {
             
             comInterface.closeConnection();
         } catch (Exception ex) {
+            ports.clear();
             throw new RuntimeException(ex);
         }
          
@@ -155,6 +156,7 @@ public class Vlan extends PropertySupport {
         if (ports.isEmpty()) {
             initPorts();
         }
+       
         for (int i = 0; i<ports.size(); i++) {
             if (Integer.parseInt(ports.get(i).toString())==port) {
                 return true;

@@ -36,6 +36,8 @@ public class Switch {
     private ArrayList<PortVlan> vlanToPortList = new ArrayList();
     private String status = "";
     private int uplinkNbr = -1;
+    //private boolean timeout = false;
+    private String model = "";
     //private ArrayList<String> problemVlans = new ArrayList<String>();
     
     
@@ -161,41 +163,48 @@ public class Switch {
         return vlanToPortList;
     }
     
+    public void setModel(String model) {
+        this.model = model;
+    }
+    
     public void initPorts()  {
        
+        
         try {
             ports.clear();
-            InetAddress hostAddress = InetAddress.getByName(ip);
-            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-            
-            SNMPVarBindList newVars = comInterface.retrieveMIBTable(OID_PORTS);
-            String gwMac = getGatewayMac();
-            
-            for (int i=0; i<newVars.size(); i++) {
-                String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
-                String value =  Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
-                if (Utility.isPortOid(oid)) {
-                    Port newPort = new Port(oid, value);
-                    ports.add(newPort);
-                } else {
-                    break;
-                }
-            }
-            
-            if (vlans.isEmpty()) {
-                initVlans();
-            }
-            
-            
-            for (Vlan v : vlans) {
-                for (Port p : ports) {
-                    if (v.portExists(p.getPortNbr())) {
-                        p.addVlan(v);
+            if (!"TIMEOUT".equals(getModel())) {
+                InetAddress hostAddress = InetAddress.getByName(ip);
+                SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+
+                SNMPVarBindList newVars = comInterface.retrieveMIBTable(OID_PORTS);
+                String gwMac = getGatewayMac();
+
+                for (int i=0; i<newVars.size(); i++) {
+                    String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+                    String value =  Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
+                    if (Utility.isPortOid(oid)) {
+                        Port newPort = new Port(oid, value);
+                        ports.add(newPort);
+                    } else {
+                        break;
                     }
                 }
+
+                if (vlans.isEmpty()) {
+                    initVlans();
+                }
+
+
+                for (Vlan v : vlans) {
+                    for (Port p : ports) {
+                        if (v.portExists(p.getPortNbr())) {
+                            p.addVlan(v);
+                        }
+                    }
+                }
+
+                comInterface.closeConnection();
             }
-            
-            comInterface.closeConnection();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -252,25 +261,27 @@ public class Switch {
     }
     
     public void initPortProblems() {
-        if (uplinkNbr!=-1) {
-            this.updateUplinkStatus();
-            ArrayList<String> uplinkVlanNbrs = this.getPortByNbr(uplinkNbr).getNonMgmVlanNbrs();
-            Set<String> uplinkBadVlans = new HashSet<String>();
-            for (Port p : this.getPorts()) {
-                if (!p.getIsUplink()) {
-                    p.getProblemVlans().clear();
-                    p.getProblemVlans().addAll(p.getNonMgmVlanNbrs());
-                    p.getProblemVlans().removeAll(uplinkVlanNbrs);
-                    uplinkBadVlans.addAll(p.getProblemVlans());
-                    //System.out.println(p.getProblemVlans());
+        if (!ports.isEmpty()) {
+            if (uplinkNbr!=-1) {
+                this.updateUplinkStatus();
+                ArrayList<String> uplinkVlanNbrs = this.getPortByNbr(uplinkNbr).getNonMgmVlanNbrs();
+                Set<String> uplinkBadVlans = new HashSet<String>();
+                for (Port p : this.getPorts()) {
+                    if (!p.getIsUplink()) {
+                        p.getProblemVlans().clear();
+                        p.getProblemVlans().addAll(p.getNonMgmVlanNbrs());
+                        p.getProblemVlans().removeAll(uplinkVlanNbrs);
+                        uplinkBadVlans.addAll(p.getProblemVlans());
+                        //System.out.println(p.getProblemVlans());
+                    }
                 }
-            }
-            for (Port p : this.getPorts()) {
-                //System.out.println("3");
-                if (p.getIsUplink()) {
+                for (Port p : this.getPorts()) {
                     //System.out.println("3");
-                    p.getProblemVlans().clear();
-                    p.getProblemVlans().addAll(uplinkBadVlans);
+                    if (p.getIsUplink()) {
+                        //System.out.println("3");
+                        p.getProblemVlans().clear();
+                        p.getProblemVlans().addAll(uplinkBadVlans);
+                    }
                 }
             }
         }
@@ -294,25 +305,27 @@ public class Switch {
         //vlans.clear();
         try {
             vlans.clear();
-            InetAddress hostAddress = InetAddress.getByName(ip);
-            SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
-            
-            SNMPVarBindList newVars = comInterface.retrieveMIBTable(OID_VLANS);            
-            String gwMac = getGatewayMac();
-            
-            for (int i = 0; i<newVars.size(); i++) {
-                String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
-                String value = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
-                if (Utility.isVlanOid(oid)) {
-                    if (!"default".equals(value)) {
-                        Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
-                        vlans.add(newVlan);
+            if (!getModel().equals("TIMEOUT")) {
+                InetAddress hostAddress = InetAddress.getByName(ip);
+                SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
+
+                SNMPVarBindList newVars = comInterface.retrieveMIBTable(OID_VLANS);            
+                String gwMac = getGatewayMac();
+
+                for (int i = 0; i<newVars.size(); i++) {
+                    String oid = Utility.getOid((SNMPSequence) newVars.getSNMPObjectAt(i));
+                    String value = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(i));
+                    if (Utility.isVlanOid(oid)) {
+                        if (!"default".equals(value)) {
+                            Vlan newVlan = new Vlan(oid, ip, community, 1, gwMac);
+                            vlans.add(newVlan);
+                        }
+                    } else {
+                        break;
                     }
-                } else {
-                    break;
                 }
+                comInterface.closeConnection();
             }
-            comInterface.closeConnection();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -324,20 +337,26 @@ public class Switch {
     }
     
     
-    public String getModel() throws UnknownHostException, SocketException, IOException, SNMPBadValueException, SNMPGetException {
-       try {
+    public String getModel()  {
+       if (model.equals("")) {
+           initModel();
+       }
+       return model;
+       
+    }
+    
+    
+    private void initModel() {
+        try {
             InetAddress hostAddress = InetAddress.getByName(ip);             
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
 
             SNMPVarBindList newVars = comInterface.getMIBEntry(OID_MODEL);
-            return Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
+            model = Utility.getValue((SNMPSequence) newVars.getSNMPObjectAt(0));
        } catch (Exception ex) {
+           model =  "TIMEOUT";
        }
-       
-       return "";
-       
     }
-    
     public String getGatewayMac()  {
        
         try {
@@ -345,6 +364,12 @@ public class Switch {
             SNMPv1CommunicationInterface comInterface = new SNMPv1CommunicationInterface(version, hostAddress, community);
             
             SNMPVarBindList newVars;
+            
+            
+            if (getModel().contains("TIMEOUT")) {
+                return "TIMEOUT";
+            }
+            
             if (getModel().contains("DGS-3100-24TG") || getModel().contains("AT-8000S")) {
                 //System.out.println("lal");
                 newVars = comInterface.retrieveMIBTable(OID_GATEWAY_IP_3100TG);
@@ -377,9 +402,10 @@ public class Switch {
             
             return (Utility.getValueAsMac((SNMPSequence) newVars.getSNMPObjectAt(0)));
         } catch (Exception ex) {
-           Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
+           return "";
+           //Logger.getLogger(Switch.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "";
+        //return "";
        
     }
     
