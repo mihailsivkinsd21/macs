@@ -25,7 +25,6 @@ public class SwitchConnection {
     private ArrayList<String> vlanErrors = new ArrayList<String>();
     
     public SwitchConnection(Switch switchUp, Switch switchDown, int upportNbr, int downportNbr) {
-        try {
             this.upportNbr = upportNbr;
             this.downportNbr = downportNbr;
             this.switchUp = switchUp;
@@ -51,16 +50,7 @@ public class SwitchConnection {
                 }
             } 
                 
-            
-        } catch (SocketException ex) {
-            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SNMPBadValueException ex) {
-            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SNMPGetException ex) {
-            Logger.getLogger(SwitchConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }
+           
     }
 
     public Switch getSwitchUp() {
@@ -107,13 +97,13 @@ public class SwitchConnection {
         this.vlanErrors = vlanErrors;
     }
     
-    public Port getUpPort() {
-        return switchUp.getPortByNbr(upportNbr);
-    }
-    
-    public Port getDownPort() {
-        return switchDown.getPortByNbr(downportNbr);
-    }
+//    public Port getUpPort() {
+//        return switchUp.getPortByNbr(upportNbr);
+//    }
+//    
+//    public Port getDownPort() {
+//        return switchDown.getPortByNbr(downportNbr);
+//    }
   
     
    

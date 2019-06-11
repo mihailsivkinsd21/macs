@@ -90,40 +90,6 @@ public class MainInterfaceWrapper extends PropertySupport {
             }
             
             
-            
-            
-            
-            
-            
-            
-            //setCurSwitch(null);
-//            curSwitch = new Switch(ip, community);
-//            switches.clear();
-//            switchConnections.clear();
-//            Switch sw1 = new Switch("172.27.78.237", "bcomsnmpadmin", 28);
-//            //sw1.initVlans();
-//            //curSwitch.initMacsOnVlans();
-//            
-//            
-//            
-//            switches.add(sw1);
-//            
-//            Switch sw2 = new Switch("172.27.78.196", "bcomsnmpadmin", 28);
-//            //sw2.updateUplinkStatus(28);
-//            switches.add(sw2);
-//            //sw2.updateUplinkStatus();
-//            Switch sw3 = new Switch("172.27.78.198", "bcomsnmpadmin", 28);
-//            //sw3.updateUplinkStatus(28);
-//            switches.add(sw3);
-//            
-//            Switch sw4 = new Switch("172.27.78.163", "bcomsnmpadmin");
-////            //sw4.updateUplinkStatus(28);
-//            switches.add(sw4);
-//            
-//            Switch sw5 = new Switch("172.27.78.197", "bcomsnmpadmin", 28);
-//            switches.add(sw5);
-            
-            
             badPorts.clear();
             for (Switch sw: switches) {
                 sw.initVlansAndPorts();
@@ -136,28 +102,10 @@ public class MainInterfaceWrapper extends PropertySupport {
                 badPorts.addAll(sw.getBadPorts());
             }
             
-           // switches.add(new Switch("172.25.2.236", "bcomsnmpadmin"));
-            //switches.add(new Switch("172.27.78.197", "bcomsnmpadmin"));
-            //switches.add(new Switch("172.27.78.198", "bcomsnmpadmin"));
-//            switches.add(new Switch("172.27.72.110", "bcomsnmpadmin"));
-//            switches.add(new Switch("172.16.131.2", "bcomsnmpadmin"));
-//            switches.add(new Switch("172.20.3.77", "bcomsnmpadmin"));
-//            switches.add(new Switch("172.27.64.118", "bcomsnmpadmin"));
-            
-//            switchConnections.add(new SwitchConnection(sw1,sw2, 27,28));
-//            switchConnections.add(new SwitchConnection(sw1,sw3,26,28));
-//            switchConnections.add(new SwitchConnection(sw4,sw1, 1, 28));
-//            switchConnections.add(new SwitchConnection(sw1,sw5,25,28));
-//            
 
-            //switches.add(new Switch("172.27.78.196", "bcomsnmpadmin"));
             firePropertyChange("curSwitch");
         } catch (Exception ex) {
-//            switches.clear();
-//            curSwitch = null;
-//            firePropertyChange("curSwitch");
             firePropertyChange("switches");
-
             throw new RuntimeException(ex);
         }
     }
