@@ -33,6 +33,7 @@ public class MainInterface extends javax.swing.JFrame {
         listTableSwitches.add(new BindingColumn("ip"));
         listTableSwitches.add(new BindingColumn("model"));
         listTableSwitches.add(new BindingColumn("gatewayMac"));
+        listTableSwitches.add(new BindingColumn("status"));
         //listTableSwitches.add(new BindingColumn("status"));
         ibg.add("curSwitch", "switches", listTableSwitches, tableSwitches);
         
@@ -115,6 +116,7 @@ public class MainInterface extends javax.swing.JFrame {
         labelCommunity = new javax.swing.JLabel();
         fieldCommunity = new javax.swing.JTextField();
         refreshSwitch = new javax.swing.JButton();
+        btnStatus = new javax.swing.JButton();
         panelVlanErrors = new javax.swing.JPanel();
         panelConnections = new javax.swing.JPanel();
         scrollpaneSwitchConnections = new javax.swing.JScrollPane();
@@ -171,6 +173,13 @@ public class MainInterface extends javax.swing.JFrame {
             }
         });
 
+        btnStatus.setText("upstatus");
+        btnStatus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStatusActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelInputLayout = new javax.swing.GroupLayout(panelInput);
         panelInput.setLayout(panelInputLayout);
         panelInputLayout.setHorizontalGroup(
@@ -188,7 +197,9 @@ public class MainInterface extends javax.swing.JFrame {
                 .addComponent(checkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(refreshSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(213, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelInputLayout.setVerticalGroup(
             panelInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,7 +211,8 @@ public class MainInterface extends javax.swing.JFrame {
                     .addComponent(labelCommunity)
                     .addComponent(fieldCommunity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(checkBtn)
-                    .addComponent(refreshSwitch))
+                    .addComponent(refreshSwitch)
+                    .addComponent(btnStatus))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -523,6 +535,16 @@ public class MainInterface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_refreshSwitchActionPerformed
 
+    private void btnStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStatusActionPerformed
+        // TODO add your handling code here:
+        try {
+            wrapper.updateStatuses();
+        } catch(Exception ex) {
+            Utility.showTimeoutError();
+            throw new RuntimeException(ex);
+        }
+    }//GEN-LAST:event_btnStatusActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -564,6 +586,7 @@ public class MainInterface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnStatus;
     private javax.swing.JToggleButton checkBtn;
     private javax.swing.JTextField fieldCommunity;
     private javax.swing.JTextField fieldIp;

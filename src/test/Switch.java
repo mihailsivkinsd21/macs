@@ -121,6 +121,10 @@ public class Switch {
     
     
     public String getStatus() {
+       return status;
+    }
+    
+    public void initStatus() {
         boolean statusCheck = true;
         if (vlans.isEmpty()) {
             initVlans();
@@ -128,6 +132,7 @@ public class Switch {
 
         for (Vlan v: vlans) {
             if (!"2".equals(v.getVlanNbr())) {
+                //v.initMacs();
                 if (!v.gwMacExists()) {
                     statusCheck = false;
                     break;
@@ -136,9 +141,11 @@ public class Switch {
         }
         
         if (statusCheck) {
-            return "OK";
+            status = "OK";
+        } else {
+            status = "NOT OK";
         }
-        return "NOT OK";
+        
     }
     
     

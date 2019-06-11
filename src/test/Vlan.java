@@ -76,6 +76,7 @@ public class Vlan extends PropertySupport {
     }
      
     public boolean gwMacExists() {
+        //initMacs();
         boolean check = false;
         for (Mac m: macs) {
             String checkmac = m.getAddress();

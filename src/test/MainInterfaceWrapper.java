@@ -115,6 +115,19 @@ public class MainInterfaceWrapper extends PropertySupport {
         return port;
         //System.out.println(port);
     }
+    
+    public void updateStatuses() {
+        ArrayList<Switch> copySwitches = new ArrayList<Switch>();
+        for (Switch sw: switches) {
+            sw.initAll();
+            sw.initStatus();
+            copySwitches.add(sw);
+            //System.out.println(sw.getStatus());
+        }
+        switches.clear();
+        switches.addAll(copySwitches);
+        //firePropertyChange("curSwitch");
+    }
 
     public PortVlan getPortToVlan() {
         //System.out.println(portToVlan);
@@ -149,6 +162,7 @@ public class MainInterfaceWrapper extends PropertySupport {
             this.curSwitch.setModel("");
         }
         this.curSwitch.initAll();
+        this.curSwitch.initStatus();
         firePropertyChange("curSwitch");
     }
 
